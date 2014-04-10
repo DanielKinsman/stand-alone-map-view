@@ -5,3 +5,5 @@ client/bin
 comms/bin
 server/bin
 utils/bin
+lib/Assembly-CSharp.dll
+lib/UnityEngine.dll
