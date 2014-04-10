@@ -35,22 +35,42 @@ namespace StandAloneMapView
 		public IPEndPoint clientEndPoint { get; set; }
 		private bool runThread;
 
-		private readonly object _updatedTimeLock = new object();
-		private comms.Time _updatedTime;
-		public comms.Time UpdatedTime
+		private readonly object _timeUpdateLock = new object();
+		private comms.Time _timeUpdate = null;
+		public comms.Time TimeUpdate
 		{
 			get
 			{
-				lock(_updatedTimeLock)
+				lock(_timeUpdateLock)
 				{
-					return _updatedTime;
+					return _timeUpdate;
 				}
 			}
 			set
 			{
-				lock(_updatedTimeLock)
+				lock(_timeUpdateLock)
 				{
-					this._updatedTime = value;
+					this._timeUpdate = value;
+				}
+			}
+		}
+
+		private readonly object _vesselUpdateLock = new object();
+		private comms.Vessel _vesselUpdate = null;
+		public comms.Vessel VesselUpdate
+		{
+			get
+			{
+				lock(_vesselUpdateLock)
+				{
+					return _vesselUpdate;
+				}
+			}
+			set
+			{
+				lock(_vesselUpdateLock)
+				{
+					this._vesselUpdate = value;
 				}
 			}
 		}
@@ -69,7 +89,7 @@ namespace StandAloneMapView
 			Log("Starting udp client listening for packets");
 			this.socket = new UdpClient(this.clientEndPoint);
 
-			this.InvokeRepeating("UnityWorker", 0.0f, comms.Time.updateInterval);
+			this.InvokeRepeating("UnityWorker", 0.0f, comms.Packet.updateInterval);
 			StartWorker();
 		}
 
@@ -82,10 +102,10 @@ namespace StandAloneMapView
 		public void StartWorker()
 		{
 			this.runThread = true;
-			new Thread(Worker).Start();
+			new Thread(SocketWorker).Start();
 		}
 
-		public void Worker()
+		public void SocketWorker()
 		{
 			// Can't log from in here because we aren't in a unity thread.
 			while(this.runThread)
@@ -93,8 +113,13 @@ namespace StandAloneMapView
 				try
 				{
 					var serverEndPoint = new IPEndPoint(IPAddress.Any, 0);
-					byte[] packet = this.socket.Receive(ref serverEndPoint);
-					this.UpdatedTime = comms.Time.ReadPacket(packet);
+					comms.Packet packet = comms.Packet.Read(this.socket.Receive(ref serverEndPoint));
+
+					if(packet.Time != null)
+						this.TimeUpdate = packet.Time;
+
+					if(packet.Vessel != null)
+						this.VesselUpdate = packet.Vessel;
 				}
 				catch(System.IO.IOException e)
 				{
@@ -114,10 +139,15 @@ namespace StandAloneMapView
 		public void UnityWorker()
 		{
 			//todo Check universal time difference within some delta, avoid forcing when possible
-			if(this.UpdatedTime != null)
+			if(this.TimeUpdate != null)
 			{
-				Planetarium.SetUniversalTime(this.UpdatedTime.UniversalTime);
+				Planetarium.SetUniversalTime(this.TimeUpdate.UniversalTime);
 				//TimeWarp.SetRate();
+			}
+
+			if(this.VesselUpdate != null)
+			{
+				LogDebug("Got vessel update id:{0}", this.VesselUpdate.id);
 			}
 		}
 
@@ -128,6 +158,7 @@ namespace StandAloneMapView
 					ControlTypes.GROUPS_ALL | ControlTypes.LINEAR | ControlTypes.QUICKLOAD | ControlTypes.QUICKSAVE |
 						ControlTypes.PAUSE | ControlTypes.TIMEWARP | ControlTypes.VESSEL_SWITCHING;
 			InputLockManager.SetControlLock(blocks, "stand-alone-map-view");
+			FlightGlobals.ActiveVessel.GoOnRails();
 		}
 	}
 }

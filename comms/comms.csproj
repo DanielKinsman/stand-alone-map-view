@@ -37,8 +37,18 @@
       <HintPath>..\lib\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\KSP_linux_client\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\KSP_linux_client\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="time.cs" />
+    <Compile Include="packet.cs" />
+    <Compile Include="vessel.cs" />
   </ItemGroup>
 </Project>

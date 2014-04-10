@@ -19,27 +19,25 @@ along with Stand Alone Map View.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+using KSP;
 using ProtoBuf;
+using System;
 
 namespace StandAloneMapView.comms
 {
 	[ProtoContract]
-	public class Time
+	public class Vessel
 	{
 		[ProtoMember(1)]
-		public double UniversalTime {get;set;}
+		public Guid id { get; set; }
 
-		[ProtoMember(2)]
-		public float TimeWarp {get;set;}
-
-		public Time()
+		public Vessel()
 		{
 		}
 
-		public Time(double universalTime, float timeWarp)
+		public Vessel(ProtoVessel kspVessel)
 		{
-			this.UniversalTime = universalTime;
-			this.TimeWarp = timeWarp;
+			this.id = kspVessel.vesselID;
 		}
 	}
 }

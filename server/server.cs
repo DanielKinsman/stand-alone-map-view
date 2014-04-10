@@ -58,7 +58,7 @@ namespace StandAloneMapView
 			DontDestroyOnLoad(this.gameObject);
 			Log("Starting udp server, sending to {0}:{1}", clientEndPoint.Address, clientEndPoint.Port);
 			this.socket = new UdpClient();
-			this.InvokeRepeating("Worker", 0.0f, comms.Time.updateInterval);
+			this.InvokeRepeating("UnityWorker", 0.0f, comms.Packet.updateInterval);
 		}
 
 		public override void OnDestroy()
@@ -71,7 +71,7 @@ namespace StandAloneMapView
 			this.socket.Close();
 		}
 
-		public void Worker()
+		public void UnityWorker()
 		{
 			// Kill the server if the user exits the current game
 			if(HighLogic.LoadedScene == GameScenes.MAINMENU ||
@@ -91,9 +91,14 @@ namespace StandAloneMapView
 
 			try
 			{
-				byte[] packet = comms.Time.MakePacket(Planetarium.GetUniversalTime(), TimeWarp.CurrentRate);
-				this.socket.BeginSend(packet, packet.Length, this.clientEndPoint, SendCallback, this.socket);
+				var packet = new comms.Packet();
+				packet.Time = new comms.Time(Planetarium.GetUniversalTime(), TimeWarp.CurrentRate);
 
+				if(FlightGlobals.ActiveVessel != null)
+					packet.Vessel = new comms.Vessel(FlightGlobals.ActiveVessel.protoVessel);
+
+				byte[] buffer = packet.Make();
+				this.socket.BeginSend(buffer, buffer.Length, this.clientEndPoint, SendCallback, this.socket);
 			}
 			catch(System.IO.IOException e)
 			{

@@ -20,26 +20,47 @@ along with Stand Alone Map View.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using ProtoBuf;
+using System;
+using System.IO;
 
 namespace StandAloneMapView.comms
 {
 	[ProtoContract]
-	public class Time
+	public class Packet
 	{
+		public const float updateInterval = 0.05f;
+
 		[ProtoMember(1)]
-		public double UniversalTime {get;set;}
+		public Time Time { get; set; }
 
 		[ProtoMember(2)]
-		public float TimeWarp {get;set;}
+		public Vessel Vessel { get; set; }
 
-		public Time()
+		public byte[] Make()
 		{
+			return Make<Packet>(this);
 		}
 
-		public Time(double universalTime, float timeWarp)
+		public static Packet Read(byte[] buffer)
 		{
-			this.UniversalTime = universalTime;
-			this.TimeWarp = timeWarp;
+			return Read<Packet>(buffer);
+		}
+
+		public static byte[] Make<T>(T obj)
+		{
+			using(var stream = new MemoryStream())
+			{
+				Serializer.Serialize<T>(stream, obj);
+				return stream.ToArray();
+			}
+		}
+
+		public static T Read<T>(byte[] buffer)
+		{
+			using(var stream = new MemoryStream(buffer))
+			{
+				return Serializer.Deserialize<T>(stream);
+			}
 		}
 	}
 }
