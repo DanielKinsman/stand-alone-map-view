@@ -29,15 +29,23 @@ namespace StandAloneMapView.comms
 	public class Vessel
 	{
 		[ProtoMember(1)]
-		public Guid id { get; set; }
+		public Guid Id { get; set; }
+
+		[ProtoMember(2)]
+		public string Name { get; set; }
+
+		[ProtoMember(3)]
+		public Orbit Orbit { get; set; }
 
 		public Vessel()
 		{
 		}
 
-		public Vessel(ProtoVessel kspVessel)
+		public Vessel(global::Vessel kspVessel)
 		{
-			this.id = kspVessel.vesselID;
+			this.Id = kspVessel.id;
+			this.Name = kspVessel.vesselName;
+			this.Orbit = new Orbit(kspVessel.orbit);
 		}
 	}
 }

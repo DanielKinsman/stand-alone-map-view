@@ -45,10 +45,12 @@
       <HintPath>..\KSP_linux_client\KSP_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="time.cs" />
     <Compile Include="packet.cs" />
     <Compile Include="vessel.cs" />
+    <Compile Include="orbit.cs" />
   </ItemGroup>
 </Project>

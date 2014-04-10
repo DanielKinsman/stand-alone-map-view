@@ -95,7 +95,9 @@ namespace StandAloneMapView
 				packet.Time = new comms.Time(Planetarium.GetUniversalTime(), TimeWarp.CurrentRate);
 
 				if(FlightGlobals.ActiveVessel != null)
-					packet.Vessel = new comms.Vessel(FlightGlobals.ActiveVessel.protoVessel);
+				{
+					packet.Vessel = new comms.Vessel(FlightGlobals.ActiveVessel);
+				}
 
 				byte[] buffer = packet.Make();
 				this.socket.BeginSend(buffer, buffer.Length, this.clientEndPoint, SendCallback, this.socket);

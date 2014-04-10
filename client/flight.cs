@@ -147,18 +147,27 @@ namespace StandAloneMapView
 
 			if(this.VesselUpdate != null)
 			{
-				LogDebug("Got vessel update id:{0}", this.VesselUpdate.id);
+				//todo Check if orbital parameters match within some delta, avoid forcing when possible
+				FlightGlobals.ActiveVessel.id = this.VesselUpdate.Id;
+				FlightGlobals.ActiveVessel.name = this.VesselUpdate.Name;
+				FlightGlobals.ActiveVessel.orbitDriver.orbit = this.VesselUpdate.Orbit.GetKspOrbit(FlightGlobals.Bodies);
 			}
 		}
 
 		public void ForceMapView()
 		{
 			MapView.EnterMapView();
+
+			//todo find a way to keep the vessel on rails without resorting to time warp
+			FlightGlobals.ActiveVessel.GoOnRails();
+
+			while(TimeWarp.CurrentRate < 5.0f)
+				TimeWarp.SetRate(TimeWarp.CurrentRateIndex+1, true);
+
 			var blocks = ControlTypes.MAP | ControlTypes.ACTIONS_SHIP | ControlTypes.ALL_SHIP_CONTROLS |
 					ControlTypes.GROUPS_ALL | ControlTypes.LINEAR | ControlTypes.QUICKLOAD | ControlTypes.QUICKSAVE |
 						ControlTypes.PAUSE | ControlTypes.TIMEWARP | ControlTypes.VESSEL_SWITCHING;
 			InputLockManager.SetControlLock(blocks, "stand-alone-map-view");
-			FlightGlobals.ActiveVessel.GoOnRails();
 		}
 	}
 }
