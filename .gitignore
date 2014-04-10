@@ -1,0 +1,7 @@
+KSP_linux_client
+KSP_linux_server
+*.userprefs
+client/bin
+comms/bin
+server/bin
+utils/bin
