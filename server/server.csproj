@@ -55,5 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="server.cs" />
+    <Compile Include="startup.cs" />
   </ItemGroup>
 </Project>
