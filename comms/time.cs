@@ -30,16 +30,16 @@ namespace StandAloneMapView.comms
 		public double UniversalTime {get;set;}
 
 		[ProtoMember(2)]
-		public float TimeWarp {get;set;}
+		public int TimeWarpRateIndex {get;set;}
 
 		public Time()
 		{
 		}
 
-		public Time(double universalTime, float timeWarp)
+		public Time(double universalTime, int timeWarpRateIndex)
 		{
 			this.UniversalTime = universalTime;
-			this.TimeWarp = timeWarp;
+			this.TimeWarpRateIndex = timeWarpRateIndex;
 		}
 	}
 }

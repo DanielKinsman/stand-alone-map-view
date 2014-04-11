@@ -132,38 +132,49 @@ namespace StandAloneMapView
 					return;
 				}
 			}
-
-			// todo update vessel
 		}
 
 		public void UnityWorker()
 		{
-			//todo Check universal time difference within some delta, avoid forcing when possible
-			if(this.TimeUpdate != null)
+			try
 			{
-				Planetarium.SetUniversalTime(this.TimeUpdate.UniversalTime);
-				//TimeWarp.SetRate();
-			}
+				if(this.TimeUpdate != null)
+				{
+					const double MAX_TIME_DELTA = 2.0; // 2 seconds
+					if(Math.Abs(Planetarium.GetUniversalTime() - this.TimeUpdate.UniversalTime) > MAX_TIME_DELTA)
+						Planetarium.SetUniversalTime(this.TimeUpdate.UniversalTime);
 
-			if(this.VesselUpdate != null)
+					if(TimeWarp.CurrentRateIndex != this.TimeUpdate.TimeWarpRateIndex)
+						TimeWarp.SetRate(this.TimeUpdate.TimeWarpRateIndex, false);
+				}
+
+				if(this.VesselUpdate != null)
+				{
+					FlightGlobals.ActiveVessel.id = this.VesselUpdate.Id; // does nothing?
+					FlightGlobals.ActiveVessel.name = this.VesselUpdate.Name; // does nothing?
+
+					if(FlightGlobals.ActiveVessel.orbitDriver.updateMode == OrbitDriver.UpdateMode.UPDATE)
+					{
+						var orbit = this.VesselUpdate.Orbit.GetKspOrbit(FlightGlobals.Bodies);
+						FlightGlobals.ActiveVessel.orbit.UpdateFromOrbitAtUT(orbit, Planetarium.GetUniversalTime(), orbit.referenceBody);
+					}
+					else if(FlightGlobals.ActiveVessel.orbitDriver.updateMode == OrbitDriver.UpdateMode.TRACK_Phys)
+					{
+						// We're off rails, go back on rails
+						FlightGlobals.ActiveVessel.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
+					}
+				}
+			}
+			catch(Exception e)
 			{
-				//todo Check if orbital parameters match within some delta, avoid forcing when possible
-				FlightGlobals.ActiveVessel.id = this.VesselUpdate.Id;
-				FlightGlobals.ActiveVessel.name = this.VesselUpdate.Name;
-				FlightGlobals.ActiveVessel.orbitDriver.orbit = this.VesselUpdate.Orbit.GetKspOrbit(FlightGlobals.Bodies);
+				LogException(e);
+				throw;
 			}
 		}
 
 		public void ForceMapView()
 		{
 			MapView.EnterMapView();
-
-			//todo find a way to keep the vessel on rails without resorting to time warp
-			FlightGlobals.ActiveVessel.GoOnRails();
-
-			while(TimeWarp.CurrentRate < 5.0f)
-				TimeWarp.SetRate(TimeWarp.CurrentRateIndex+1, true);
-
 			var blocks = ControlTypes.MAP | ControlTypes.ACTIONS_SHIP | ControlTypes.ALL_SHIP_CONTROLS |
 					ControlTypes.GROUPS_ALL | ControlTypes.LINEAR | ControlTypes.QUICKLOAD | ControlTypes.QUICKSAVE |
 						ControlTypes.PAUSE | ControlTypes.TIMEWARP | ControlTypes.VESSEL_SWITCHING;

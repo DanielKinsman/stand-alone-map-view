@@ -28,7 +28,7 @@ namespace StandAloneMapView.comms
 	[ProtoContract]
 	public class Packet
 	{
-		public const float updateInterval = 1.0f;
+		public const float updateInterval = 0.05f;
 
 		[ProtoMember(1)]
 		public Time Time { get; set; }

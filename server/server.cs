@@ -96,12 +96,13 @@ namespace StandAloneMapView
 			try
 			{
 				var packet = new comms.Packet();
-				packet.Time = new comms.Time(Planetarium.GetUniversalTime(), TimeWarp.CurrentRate);
+				packet.Time = new comms.Time(Planetarium.GetUniversalTime(), TimeWarp.CurrentRateIndex);
 
 				if(FlightGlobals.ActiveVessel != null)
 				{
 					packet.Vessel = new comms.Vessel(FlightGlobals.ActiveVessel);
 				}
+
 
 				byte[] buffer = packet.Make();
 				this.socket.BeginSend(buffer, buffer.Length, this.clientEndPoint, SendCallback, this.socket);
@@ -109,6 +110,11 @@ namespace StandAloneMapView
 			catch(System.IO.IOException e)
 			{
 				LogException(e);
+			}
+			catch(Exception e)
+			{
+				LogException(e);
+				throw;
 			}
 		}
 
