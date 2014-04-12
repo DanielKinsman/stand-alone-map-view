@@ -56,5 +56,6 @@
   <ItemGroup>
     <Compile Include="server.cs" />
     <Compile Include="startup.cs" />
+    <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
 </Project>

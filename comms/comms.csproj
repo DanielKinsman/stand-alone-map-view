@@ -52,5 +52,6 @@
     <Compile Include="packet.cs" />
     <Compile Include="vessel.cs" />
     <Compile Include="orbit.cs" />
+    <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
 </Project>

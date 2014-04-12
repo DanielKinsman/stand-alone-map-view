@@ -38,6 +38,7 @@
     <Compile Include="spacecenter.cs" />
     <Compile Include="socketworker.cs" />
     <Compile Include="trackingstation.cs" />
+    <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\comms\comms.csproj">
