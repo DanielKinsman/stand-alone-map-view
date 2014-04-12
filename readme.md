@@ -14,7 +14,7 @@ To get it working, you'll need two separate installs of KSP, your normal one
 and a separate one just for this mod. The "server" stuff goes in your normal
 game (in the GameData directory), the "client" stuff goes in the other
 install (also under GameData). Start up an instance of both and you should
-be in business, providing you have the CPU and GPU to handle it.
+be in business, providing you have the CPU and GPU and RAM to handle it.
 
 Current Features
 ----------------
@@ -28,6 +28,15 @@ Feature Wishlist
 * Configurable ip adress/port settings
 * Syncing of manoeuver nodes (bidirectional)
 * Syncing of all vessels' orbits
+
+Minimum requirements
+--------------------
+
+* 2 monitors
+* 4 core processor
+* 6GB RAM
+
+Or a separate computer to run the map view on.
 
 Licenses
 --------
@@ -48,4 +57,3 @@ Contact
 
 * danielkinsman@riseup.net
 * https://github.com/DanielKinsman/stand-alone-map-view
-
