@@ -102,8 +102,9 @@ namespace StandAloneMapView
             if(timeUpdate == null)
                 return;
 
-            const double MAX_TIME_DELTA = 2.0; // 2 seconds
-            if(Math.Abs(Planetarium.GetUniversalTime() - timeUpdate.UniversalTime) > MAX_TIME_DELTA)
+            const double MAX_TIME_DELTA = 1.0; // 1 second per 1x time warp
+            double maxTimeDelta = MAX_TIME_DELTA * TimeWarp.CurrentRate;
+            if(Math.Abs(Planetarium.GetUniversalTime() - timeUpdate.UniversalTime) > maxTimeDelta)
                 Planetarium.SetUniversalTime(timeUpdate.UniversalTime);
 
             if(TimeWarp.CurrentRateIndex != timeUpdate.TimeWarpRateIndex)
