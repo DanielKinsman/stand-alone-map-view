@@ -24,61 +24,61 @@ using System;
 
 namespace StandAloneMapView
 {
-	[KSPAddon(KSPAddon.Startup.TrackingStation, false)]
-	public class TrackingStation : utils.MonoBehaviourExtended
-	{
-		public SocketWorker socketWorker;
+    [KSPAddon(KSPAddon.Startup.TrackingStation, false)]
+    public class TrackingStation : utils.MonoBehaviourExtended
+    {
+        public SocketWorker socketWorker;
 
-		public TrackingStation()
-		{
-			this.LogPrefix = "samv client";
-			this.socketWorker = new SocketWorker();
-		}
+        public TrackingStation()
+        {
+            this.LogPrefix = "samv client";
+            this.socketWorker = new SocketWorker();
+        }
 
-		public override void Awake()
-		{
-			this.InvokeRepeating("UnityWorker", 0.0f, comms.Packet.updateInterval);
-			this.socketWorker.Start();
-		}
+        public override void Awake()
+        {
+            this.InvokeRepeating("UnityWorker", 0.0f, comms.Packet.updateInterval);
+            this.socketWorker.Start();
+        }
 
-		public override void OnDestroy()
-		{
-			if(this.socketWorker != null)
-			{
-				this.socketWorker.Stop();
-				this.socketWorker = null;
-			}
-		}
+        public override void OnDestroy()
+        {
+            if(this.socketWorker != null)
+            {
+                this.socketWorker.Stop();
+                this.socketWorker = null;
+            }
+        }
 
-		public void UnityWorker()
-		{
-			try
-			{
-				Flight.UpdateTime(this.socketWorker.TimeUpdate);
+        public void UnityWorker()
+        {
+            try
+            {
+                Flight.UpdateTime(this.socketWorker.TimeUpdate);
 
-				var vesselUpdate = this.socketWorker.VesselUpdate;
-				if(vesselUpdate != null)
-				{
-					// create new vessel (if required)
-					// switch to it
-					// this.socketWorker.Stop()
+                var vesselUpdate = this.socketWorker.VesselUpdate;
+                if(vesselUpdate != null)
+                {
+                    // create new vessel (if required)
+                    // switch to it
+                    // this.socketWorker.Stop()
 
-					// Attempt #1
-					// FlightDriver.StartupBehaviour = FlightDriver.StartupBehaviours.NEW_FROM_FILE;
-					// FlightDriver.newShipToLoadPath = "/some/path/to/a/dummy.craft";
-					// HighLogic.LoadScene(GameScenes.FLIGHT);
-					// Log fills with [EXC 12:06:55.265] NullReferenceException: Object reference not set to an instance of an object
+                    // Attempt #1
+                    // FlightDriver.StartupBehaviour = FlightDriver.StartupBehaviours.NEW_FROM_FILE;
+                    // FlightDriver.newShipToLoadPath = "/some/path/to/a/dummy.craft";
+                    // HighLogic.LoadScene(GameScenes.FLIGHT);
+                    // Log fills with [EXC 12:06:55.265] NullReferenceException: Object reference not set to an instance of an object
 
-					// Giving up for now, just use a dummy object in the save.
-					this.socketWorker.Stop();
-					FlightDriver.StartAndFocusVessel(HighLogic.CurrentGame, 0);
-				}
-			}
-			catch(Exception e)
-			{
-				LogException(e);
-				throw;
-			}
-		}
-	}
+                    // Giving up for now, just use a dummy object in the save.
+                    this.socketWorker.Stop();
+                    FlightDriver.StartAndFocusVessel(HighLogic.CurrentGame, 0);
+                }
+            }
+            catch(Exception e)
+            {
+                LogException(e);
+                throw;
+            }
+        }
+    }
 }

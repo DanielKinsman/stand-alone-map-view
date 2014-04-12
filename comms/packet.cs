@@ -25,42 +25,42 @@ using System.IO;
 
 namespace StandAloneMapView.comms
 {
-	[ProtoContract]
-	public class Packet
-	{
-		public const float updateInterval = 0.05f;
+    [ProtoContract]
+    public class Packet
+    {
+        public const float updateInterval = 0.05f;
 
-		[ProtoMember(1)]
-		public Time Time { get; set; }
+        [ProtoMember(1)]
+        public Time Time { get; set; }
 
-		[ProtoMember(2)]
-		public Vessel Vessel { get; set; }
+        [ProtoMember(2)]
+        public Vessel Vessel { get; set; }
 
-		public byte[] Make()
-		{
-			return Make<Packet>(this);
-		}
+        public byte[] Make()
+        {
+            return Make<Packet>(this);
+        }
 
-		public static Packet Read(byte[] buffer)
-		{
-			return Read<Packet>(buffer);
-		}
+        public static Packet Read(byte[] buffer)
+        {
+            return Read<Packet>(buffer);
+        }
 
-		public static byte[] Make<T>(T obj)
-		{
-			using(var stream = new MemoryStream())
-			{
-				Serializer.Serialize<T>(stream, obj);
-				return stream.ToArray();
-			}
-		}
+        public static byte[] Make<T>(T obj)
+        {
+            using(var stream = new MemoryStream())
+            {
+                Serializer.Serialize<T>(stream, obj);
+                return stream.ToArray();
+            }
+        }
 
-		public static T Read<T>(byte[] buffer)
-		{
-			using(var stream = new MemoryStream(buffer))
-			{
-				return Serializer.Deserialize<T>(stream);
-			}
-		}
-	}
+        public static T Read<T>(byte[] buffer)
+        {
+            using(var stream = new MemoryStream(buffer))
+            {
+                return Serializer.Deserialize<T>(stream);
+            }
+        }
+    }
 }

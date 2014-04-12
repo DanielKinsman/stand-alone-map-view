@@ -27,60 +27,60 @@ using System.Collections.Generic;
 
 namespace StandAloneMapView.comms
 {
-	[ProtoContract]
-	public class Orbit
-	{
-		[ProtoMember(1)]
-		public double meanAnomalyAtEpoch;
+    [ProtoContract]
+    public class Orbit
+    {
+        [ProtoMember(1)]
+        public double meanAnomalyAtEpoch;
 
-		[ProtoMember(2)]
-		public double LAN;
+        [ProtoMember(2)]
+        public double LAN;
 
-		[ProtoMember(3)]
-		public string ReferenceBody;
+        [ProtoMember(3)]
+        public string ReferenceBody;
 
-		[ProtoMember(4)]
-		public double epoch;
+        [ProtoMember(4)]
+        public double epoch;
 
-		[ProtoMember(5)]
-		public double eccentricity;
+        [ProtoMember(5)]
+        public double eccentricity;
 
-		[ProtoMember(6)]
-		public double semiMajorAxis;
+        [ProtoMember(6)]
+        public double semiMajorAxis;
 
-		[ProtoMember(7)]
-		public double argumentOfPeriapsis;
+        [ProtoMember(7)]
+        public double argumentOfPeriapsis;
 
-		[ProtoMember(8)]
-		public double inclination;
+        [ProtoMember(8)]
+        public double inclination;
 
-		public Orbit()
-		{
-		}
+        public Orbit()
+        {
+        }
 
-		public Orbit(global::Orbit kspOrbit)
-		{
-			this.meanAnomalyAtEpoch = kspOrbit.meanAnomalyAtEpoch;
-			this.LAN = kspOrbit.LAN;
-			this.ReferenceBody = kspOrbit.referenceBody.name;
-			this.epoch = kspOrbit.epoch;
-			this.eccentricity = kspOrbit.eccentricity;
-			this.semiMajorAxis = kspOrbit.semiMajorAxis;
-			this.argumentOfPeriapsis = kspOrbit.argumentOfPeriapsis;
-			this.inclination = kspOrbit.inclination;
-		}
+        public Orbit(global::Orbit kspOrbit)
+        {
+            this.meanAnomalyAtEpoch = kspOrbit.meanAnomalyAtEpoch;
+            this.LAN = kspOrbit.LAN;
+            this.ReferenceBody = kspOrbit.referenceBody.name;
+            this.epoch = kspOrbit.epoch;
+            this.eccentricity = kspOrbit.eccentricity;
+            this.semiMajorAxis = kspOrbit.semiMajorAxis;
+            this.argumentOfPeriapsis = kspOrbit.argumentOfPeriapsis;
+            this.inclination = kspOrbit.inclination;
+        }
 
-		public global::Orbit GetKspOrbit(IList<CelestialBody> bodies)
-		{
-			return new global::Orbit(
-				this.inclination,
-				this.eccentricity,
-				this.semiMajorAxis,
-				this.LAN,
-				this.argumentOfPeriapsis,
-				this.meanAnomalyAtEpoch,
-				this.epoch,
-				bodies.First((x) => x.name == this.ReferenceBody));
-		}
-	}
+        public global::Orbit GetKspOrbit(IList<CelestialBody> bodies)
+        {
+            return new global::Orbit(
+                this.inclination,
+                this.eccentricity,
+                this.semiMajorAxis,
+                this.LAN,
+                this.argumentOfPeriapsis,
+                this.meanAnomalyAtEpoch,
+                this.epoch,
+                bodies.First((x) => x.name == this.ReferenceBody));
+        }
+    }
 }

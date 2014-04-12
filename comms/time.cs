@@ -23,23 +23,23 @@ using ProtoBuf;
 
 namespace StandAloneMapView.comms
 {
-	[ProtoContract]
-	public class Time
-	{
-		[ProtoMember(1)]
-		public double UniversalTime {get;set;}
+    [ProtoContract]
+    public class Time
+    {
+        [ProtoMember(1)]
+        public double UniversalTime {get;set;}
 
-		[ProtoMember(2)]
-		public int TimeWarpRateIndex {get;set;}
+        [ProtoMember(2)]
+        public int TimeWarpRateIndex {get;set;}
 
-		public Time()
-		{
-		}
+        public Time()
+        {
+        }
 
-		public Time(double universalTime, int timeWarpRateIndex)
-		{
-			this.UniversalTime = universalTime;
-			this.TimeWarpRateIndex = timeWarpRateIndex;
-		}
-	}
+        public Time(double universalTime, int timeWarpRateIndex)
+        {
+            this.UniversalTime = universalTime;
+            this.TimeWarpRateIndex = timeWarpRateIndex;
+        }
+    }
 }

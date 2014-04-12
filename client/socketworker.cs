@@ -26,101 +26,101 @@ using System.Threading;
 
 namespace StandAloneMapView
 {
-	public class SocketWorker
-	{
-		protected UdpClient socket;
-		public IPEndPoint clientEndPoint { get; set; }
-		private bool runThread;
+    public class SocketWorker
+    {
+        protected UdpClient socket;
+        public IPEndPoint clientEndPoint { get; set; }
+        private bool runThread;
 
-		// Thread safety is probably not too much of a concern
-		// given we are only "writing" from the worker thread
-		// and reading everywhere else, but call me paranoid.
-		// I know for sure that those "writes" aren't atomic.
+        // Thread safety is probably not too much of a concern
+        // given we are only "writing" from the worker thread
+        // and reading everywhere else, but call me paranoid.
+        // I know for sure that those "writes" aren't atomic.
 
-		private readonly object _timeUpdateLock = new object();
-		private comms.Time _timeUpdate = null;
-		public comms.Time TimeUpdate
-		{
-			get
-			{
-				lock(_timeUpdateLock)
-				{
-					return _timeUpdate;
-				}
-			}
-			set
-			{
-				lock(_timeUpdateLock)
-				{
-					this._timeUpdate = value;
-				}
-			}
-		}
+        private readonly object _timeUpdateLock = new object();
+        private comms.Time _timeUpdate = null;
+        public comms.Time TimeUpdate
+        {
+            get
+            {
+                lock(_timeUpdateLock)
+                {
+                    return _timeUpdate;
+                }
+            }
+            set
+            {
+                lock(_timeUpdateLock)
+                {
+                    this._timeUpdate = value;
+                }
+            }
+        }
 
-		private readonly object _vesselUpdateLock = new object();
-		private comms.Vessel _vesselUpdate = null;
-		public comms.Vessel VesselUpdate
-		{
-			get
-			{
-				lock(_vesselUpdateLock)
-				{
-					return _vesselUpdate;
-				}
-			}
-			set
-			{
-				lock(_vesselUpdateLock)
-				{
-					this._vesselUpdate = value;
-				}
-			}
-		}
+        private readonly object _vesselUpdateLock = new object();
+        private comms.Vessel _vesselUpdate = null;
+        public comms.Vessel VesselUpdate
+        {
+            get
+            {
+                lock(_vesselUpdateLock)
+                {
+                    return _vesselUpdate;
+                }
+            }
+            set
+            {
+                lock(_vesselUpdateLock)
+                {
+                    this._vesselUpdate = value;
+                }
+            }
+        }
 
-		public SocketWorker()
-		{
-			this.clientEndPoint = new IPEndPoint(IPAddress.Loopback, 8397);
-		}
+        public SocketWorker()
+        {
+            this.clientEndPoint = new IPEndPoint(IPAddress.Loopback, 8397);
+        }
 
-		public void Start()
-		{
-			this.socket = new UdpClient(this.clientEndPoint);
-			this.runThread = true;
-			new Thread(Worker).Start();
-		}
+        public void Start()
+        {
+            this.socket = new UdpClient(this.clientEndPoint);
+            this.runThread = true;
+            new Thread(Worker).Start();
+        }
 
-		public void Stop()
-		{
-			this.runThread = false;
-			this.socket.Close();
-		}
+        public void Stop()
+        {
+            this.runThread = false;
+            this.socket.Close();
+        }
 
-		public void Worker()
-		{
-			while(this.runThread)
-			{
-				try
-				{
-					var serverEndPoint = new IPEndPoint(IPAddress.Any, 0);
-					comms.Packet packet = comms.Packet.Read(this.socket.Receive(ref serverEndPoint));
+        public void Worker()
+        {
+            while(this.runThread)
+            {
+                try
+                {
+                    var serverEndPoint = new IPEndPoint(IPAddress.Any, 0);
+                    comms.Packet packet = comms.Packet.Read(this.socket.Receive(ref serverEndPoint));
 
-					if(packet.Time != null)
-						this.TimeUpdate = packet.Time;
+                    if(packet.Time != null)
+                        this.TimeUpdate = packet.Time;
 
-					if(packet.Vessel != null)
-						this.VesselUpdate = packet.Vessel;
-				}
-				catch(System.IO.IOException)
-				{
-					//todo log
-					System.Threading.Thread.Sleep(100);
-				}
-				catch(Exception)
-				{
-					//todo log
-					throw;
-				}
-			}
-		}
-	}
+                    if(packet.Vessel != null)
+                        this.VesselUpdate = packet.Vessel;
+                }
+                catch(System.IO.IOException)
+                {
+                    //todo log
+                    System.Threading.Thread.Sleep(100);
+                }
+                catch(Exception)
+                {
+                    //todo log
+                    throw;
+                }
+            }
+        }
+    }
 }

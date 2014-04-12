@@ -27,22 +27,22 @@ using UnityEngine;
 
 namespace StandAloneMapView
 {
-	[KSPAddon(KSPAddon.Startup.MainMenu, false)]
-	public class Startup : utils.MonoBehaviourExtended
-	{
-		public Startup()
-		{
-			this.LogPrefix = "samv server";
-		}
+    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
+    public class Startup : utils.MonoBehaviourExtended
+    {
+        public Startup()
+        {
+            this.LogPrefix = "samv server";
+        }
 
-		public override void Start()
-		{
-			HighLogic.SaveFolder = "default";
-			var game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
-			game.startScene = GameScenes.SPACECENTER;
-			game.Start();
-		}
-	}
+        public override void Start()
+        {
+            HighLogic.SaveFolder = "default";
+            var game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
+            game.startScene = GameScenes.SPACECENTER;
+            game.Start();
+        }
+    }
 }
 
 #endif

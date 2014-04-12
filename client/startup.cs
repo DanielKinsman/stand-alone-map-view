@@ -26,41 +26,41 @@ using UnityEngine;
 
 namespace StandAloneMapView
 {
-	[KSPAddon(KSPAddon.Startup.MainMenu, false)]
-	public class Startup : utils.MonoBehaviourExtended
-	{
-		public override void Start()
-		{
-			const string SAVEFILE = "persistent";
-			const string SAVEFILENAME = "persistent.sfs";
-			const string SAVEDIRECTORY = "stand_alone_map_viewer_dont_touch";
+    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
+    public class Startup : utils.MonoBehaviourExtended
+    {
+        public override void Start()
+        {
+            const string SAVEFILE = "persistent";
+            const string SAVEFILENAME = "persistent.sfs";
+            const string SAVEDIRECTORY = "stand_alone_map_viewer_dont_touch";
 
-			try
-			{
-				HighLogic.SaveFolder = SAVEDIRECTORY;
+            try
+            {
+                HighLogic.SaveFolder = SAVEDIRECTORY;
 
-				// KSP is naughty and stores savegames in the application directory.
-				var path = Path.Combine(
-									Path.Combine(KSPUtil.ApplicationRootPath, "saves"),
-									HighLogic.SaveFolder);
+                // KSP is naughty and stores savegames in the application directory.
+                var path = Path.Combine(
+                                    Path.Combine(KSPUtil.ApplicationRootPath, "saves"),
+                                    HighLogic.SaveFolder);
 
-				Directory.CreateDirectory(path); //safe if already exists
+                Directory.CreateDirectory(path); //safe if already exists
 
-				var origin = Path.Combine(
-					Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location),
-					SAVEFILENAME);
-				var destination = Path.Combine(path, SAVEFILENAME);
-				File.Copy(origin, destination, true);
+                var origin = Path.Combine(
+                    Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location),
+                    SAVEFILENAME);
+                var destination = Path.Combine(path, SAVEFILENAME);
+                File.Copy(origin, destination, true);
 
-				var game = GamePersistence.LoadGame(SAVEFILE, HighLogic.SaveFolder, true, false);
-				game.startScene = GameScenes.TRACKSTATION;
-				game.Start();
-			}
-			catch(Exception e)
-			{
-				LogException(e);
-				throw;
-			}
-		}
-	}
+                var game = GamePersistence.LoadGame(SAVEFILE, HighLogic.SaveFolder, true, false);
+                game.startScene = GameScenes.TRACKSTATION;
+                game.Start();
+            }
+            catch(Exception e)
+            {
+                LogException(e);
+                throw;
+            }
+        }
+    }
 }

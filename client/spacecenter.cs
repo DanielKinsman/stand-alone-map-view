@@ -23,13 +23,13 @@ using KSP;
 
 namespace StandAloneMapView
 {
-	[KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
-	public class SpaceCenter : utils.MonoBehaviourExtended
-	{
-		public override void Awake()
-		{
-			// go back to tracking station
-			HighLogic.LoadScene(GameScenes.TRACKSTATION);
-		}
-	}
+    [KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
+    public class SpaceCenter : utils.MonoBehaviourExtended
+    {
+        public override void Awake()
+        {
+            // go back to tracking station
+            HighLogic.LoadScene(GameScenes.TRACKSTATION);
+        }
+    }
 }

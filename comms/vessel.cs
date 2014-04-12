@@ -25,27 +25,27 @@ using System;
 
 namespace StandAloneMapView.comms
 {
-	[ProtoContract]
-	public class Vessel
-	{
-		[ProtoMember(1)]
-		public Guid Id { get; set; }
+    [ProtoContract]
+    public class Vessel
+    {
+        [ProtoMember(1)]
+        public Guid Id { get; set; }
 
-		[ProtoMember(2)]
-		public string Name { get; set; }
+        [ProtoMember(2)]
+        public string Name { get; set; }
 
-		[ProtoMember(3)]
-		public Orbit Orbit { get; set; }
+        [ProtoMember(3)]
+        public Orbit Orbit { get; set; }
 
-		public Vessel()
-		{
-		}
+        public Vessel()
+        {
+        }
 
-		public Vessel(global::Vessel kspVessel)
-		{
-			this.Id = kspVessel.id;
-			this.Name = kspVessel.vesselName;
-			this.Orbit = new Orbit(kspVessel.orbit);
-		}
-	}
+        public Vessel(global::Vessel kspVessel)
+        {
+            this.Id = kspVessel.id;
+            this.Name = kspVessel.vesselName;
+            this.Orbit = new Orbit(kspVessel.orbit);
+        }
+    }
 }
