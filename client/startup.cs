@@ -20,32 +20,47 @@ along with Stand Alone Map View.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using KSP;
+using System;
+using System.IO;
 using UnityEngine;
 
 namespace StandAloneMapView
 {
 	[KSPAddon(KSPAddon.Startup.MainMenu, false)]
-	public class Startup : MonoBehaviour
+	public class Startup : utils.MonoBehaviourExtended
 	{
-		public void Start()
+		public override void Start()
 		{
-			HighLogic.SaveFolder = "samv";
-			//todo create it, wipe it, newgame it whatever
-			var game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
+			const string SAVEFILE = "persistent";
+			const string SAVEFILENAME = "persistent.sfs";
+			const string SAVEDIRECTORY = "stand_alone_map_viewer_dont_touch";
 
-			//todo prevent saving of any kind
-			//FlightAutoSave.fetch.bypassAutoSave = true;
-			//FlightDriver.BypassPersistence = true;
-			//FlightDriver.CanRevert = false;
+			try
+			{
+				HighLogic.SaveFolder = SAVEDIRECTORY;
 
-			//todo connect to server, update vessels, Planetarium, time etc
+				// KSP is naughty and stores savegames in the application directory.
+				var path = Path.Combine(
+									Path.Combine(KSPUtil.ApplicationRootPath, "saves"),
+									HighLogic.SaveFolder);
 
-			// todo go to active vessel, if no active vessel go to tracking station
+				Directory.CreateDirectory(path); //safe if already exists
 
-			if(game != null && game.flightState != null && game.compatible)
-            {
-                FlightDriver.StartAndFocusVessel(game, 0);
-            }
+				var origin = Path.Combine(
+					Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location),
+					SAVEFILENAME);
+				var destination = Path.Combine(path, SAVEFILENAME);
+				File.Copy(origin, destination, true);
+
+				var game = GamePersistence.LoadGame(SAVEFILE, HighLogic.SaveFolder, true, false);
+				game.startScene = GameScenes.TRACKSTATION;
+				game.Start();
+			}
+			catch(Exception e)
+			{
+				LogException(e);
+				throw;
+			}
 		}
 	}
 }

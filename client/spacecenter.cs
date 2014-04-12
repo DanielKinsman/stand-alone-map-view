@@ -19,30 +19,17 @@ along with Stand Alone Map View.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-
-#if DEBUG
-
 using KSP;
-using UnityEngine;
 
 namespace StandAloneMapView
 {
-	[KSPAddon(KSPAddon.Startup.MainMenu, false)]
-	public class Startup : utils.MonoBehaviourExtended
+	[KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
+	public class SpaceCenter : utils.MonoBehaviourExtended
 	{
-		public Startup()
+		public override void Awake()
 		{
-			this.LogPrefix = "samv server";
-		}
-
-		public override void Start()
-		{
-			HighLogic.SaveFolder = "default";
-			var game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
-			game.startScene = GameScenes.SPACECENTER;
-			game.Start();
+			// go back to tracking station
+			HighLogic.LoadScene(GameScenes.TRACKSTATION);
 		}
 	}
 }
-
-#endif

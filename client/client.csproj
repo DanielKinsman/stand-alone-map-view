@@ -35,6 +35,9 @@
   <ItemGroup>
     <Compile Include="startup.cs" />
     <Compile Include="flight.cs" />
+    <Compile Include="spacecenter.cs" />
+    <Compile Include="socketworker.cs" />
+    <Compile Include="trackingstation.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\comms\comms.csproj">
@@ -56,5 +59,10 @@
       <HintPath>..\lib\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="persistent.sfs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

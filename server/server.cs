@@ -28,11 +28,7 @@ using UnityEngine;
 
 namespace StandAloneMapView
 {
-#if DEBUG
-	[KSPAddon(KSPAddon.Startup.Flight, true)]
-#else
 	[KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
-#endif
 	public class Server : utils.MonoBehaviourExtended
 	{
 		// Don't start more than one server, but also close the server when

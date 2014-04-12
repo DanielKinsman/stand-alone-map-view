@@ -31,106 +31,28 @@ namespace StandAloneMapView
 	[KSPAddon(KSPAddon.Startup.Flight, false)]
 	public class Flight : utils.MonoBehaviourExtended
 	{
-		protected UdpClient socket;
-		public IPEndPoint clientEndPoint { get; set; }
-		private bool runThread;
-
-		private readonly object _timeUpdateLock = new object();
-		private comms.Time _timeUpdate = null;
-		public comms.Time TimeUpdate
-		{
-			get
-			{
-				lock(_timeUpdateLock)
-				{
-					return _timeUpdate;
-				}
-			}
-			set
-			{
-				lock(_timeUpdateLock)
-				{
-					this._timeUpdate = value;
-				}
-			}
-		}
-
-		private readonly object _vesselUpdateLock = new object();
-		private comms.Vessel _vesselUpdate = null;
-		public comms.Vessel VesselUpdate
-		{
-			get
-			{
-				lock(_vesselUpdateLock)
-				{
-					return _vesselUpdate;
-				}
-			}
-			set
-			{
-				lock(_vesselUpdateLock)
-				{
-					this._vesselUpdate = value;
-				}
-			}
-		}
+		public SocketWorker socketWorker;
 
 		public Flight()
 		{
-			this.clientEndPoint = new IPEndPoint(IPAddress.Loopback, 8397);
 			this.LogPrefix = "samv client";
+			this.socketWorker = new SocketWorker();
 		}
 
 		public override void Awake()
 		{
 			MapView.OnExitMapView += () => ForceMapView();
 			this.Invoke("ForceMapView", 0.25f); // Call it directly in Start() and it doesn't work.
-
-			Log("Starting udp client listening for packets");
-			this.socket = new UdpClient(this.clientEndPoint);
-
 			this.InvokeRepeating("UnityWorker", 0.0f, comms.Packet.updateInterval);
-			StartWorker();
+			this.socketWorker.Start();
 		}
 
 		public override void OnDestroy()
 		{
-			this.socket.Close();
-			this.runThread = false;
-		}
-
-		public void StartWorker()
-		{
-			this.runThread = true;
-			new Thread(SocketWorker).Start();
-		}
-
-		public void SocketWorker()
-		{
-			// Can't log from in here because we aren't in a unity thread.
-			while(this.runThread)
+			if(this.socketWorker != null)
 			{
-				try
-				{
-					var serverEndPoint = new IPEndPoint(IPAddress.Any, 0);
-					comms.Packet packet = comms.Packet.Read(this.socket.Receive(ref serverEndPoint));
-
-					if(packet.Time != null)
-						this.TimeUpdate = packet.Time;
-
-					if(packet.Vessel != null)
-						this.VesselUpdate = packet.Vessel;
-				}
-				catch(System.IO.IOException e)
-				{
-					LogException(e);
-					System.Threading.Thread.Sleep(100);
-				}
-				catch(Exception e)
-				{
-					LogException(e);
-					return;
-				}
+				this.socketWorker.Stop();
+				this.socketWorker = null;
 			}
 		}
 
@@ -138,24 +60,18 @@ namespace StandAloneMapView
 		{
 			try
 			{
-				if(this.TimeUpdate != null)
-				{
-					const double MAX_TIME_DELTA = 2.0; // 2 seconds
-					if(Math.Abs(Planetarium.GetUniversalTime() - this.TimeUpdate.UniversalTime) > MAX_TIME_DELTA)
-						Planetarium.SetUniversalTime(this.TimeUpdate.UniversalTime);
+				UpdateTime(this.socketWorker.TimeUpdate);
 
-					if(TimeWarp.CurrentRateIndex != this.TimeUpdate.TimeWarpRateIndex)
-						TimeWarp.SetRate(this.TimeUpdate.TimeWarpRateIndex, false);
-				}
-
-				if(this.VesselUpdate != null)
+				var vesselUpdate = this.socketWorker.VesselUpdate;
+				if(vesselUpdate != null)
 				{
-					FlightGlobals.ActiveVessel.id = this.VesselUpdate.Id; // does nothing?
-					FlightGlobals.ActiveVessel.name = this.VesselUpdate.Name; // does nothing?
+					FlightGlobals.ActiveVessel.id = vesselUpdate.Id; // works?
+					FlightGlobals.ActiveVessel.name = vesselUpdate.Name;
+					FlightGlobals.ActiveVessel.vesselName = vesselUpdate.Name;
 
 					if(FlightGlobals.ActiveVessel.orbitDriver.updateMode == OrbitDriver.UpdateMode.UPDATE)
 					{
-						var orbit = this.VesselUpdate.Orbit.GetKspOrbit(FlightGlobals.Bodies);
+						var orbit = vesselUpdate.Orbit.GetKspOrbit(FlightGlobals.Bodies);
 						FlightGlobals.ActiveVessel.orbit.UpdateFromOrbitAtUT(orbit, Planetarium.GetUniversalTime(), orbit.referenceBody);
 					}
 					else if(FlightGlobals.ActiveVessel.orbitDriver.updateMode == OrbitDriver.UpdateMode.TRACK_Phys)
@@ -179,6 +95,19 @@ namespace StandAloneMapView
 					ControlTypes.GROUPS_ALL | ControlTypes.LINEAR | ControlTypes.QUICKLOAD | ControlTypes.QUICKSAVE |
 						ControlTypes.PAUSE | ControlTypes.TIMEWARP | ControlTypes.VESSEL_SWITCHING;
 			InputLockManager.SetControlLock(blocks, "stand-alone-map-view");
+		}
+
+		public static void UpdateTime(comms.Time timeUpdate)
+		{
+			if(timeUpdate == null)
+				return;
+
+			const double MAX_TIME_DELTA = 2.0; // 2 seconds
+			if(Math.Abs(Planetarium.GetUniversalTime() - timeUpdate.UniversalTime) > MAX_TIME_DELTA)
+				Planetarium.SetUniversalTime(timeUpdate.UniversalTime);
+
+			if(TimeWarp.CurrentRateIndex != timeUpdate.TimeWarpRateIndex)
+				TimeWarp.SetRate(timeUpdate.TimeWarpRateIndex, false);
 		}
 	}
 }
