@@ -37,7 +37,9 @@ namespace StandAloneMapView
 
         public override void Awake()
         {
-            this.InvokeRepeating("UnityWorker", 0.0f, comms.Packet.updateInterval);
+            // Invoke the worker on a 2 second delay to let things "settle in"
+            // Seems unstable if you don't.
+            this.InvokeRepeating("UnityWorker", 2.0f, comms.Packet.updateInterval);
             this.socketWorker.Start();
         }
 

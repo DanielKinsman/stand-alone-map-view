@@ -5,7 +5,10 @@ A Kerbal Space Program mod that opens the map view in another window/monitor.
 It works by launching a separate instance of the game, and syncing the time
 and ship information via networking (udp).
 
-**Still very much a work in progress, use at your own risk**
+**Still very much a work in progress, use at your own risk**  
+No usability or UI, and contains horrible bugs, but luckily they don't happen
+in your main game window, just on the map view. When that happens you can
+keep playing and only have to restart the map view.
 
 To get it working, you'll need two separate installs of KSP, your normal one
 and a separate one just for this mod. The "server" stuff goes in your normal
@@ -32,8 +35,13 @@ Licenses
 Stand Alone Map View copyright 2014 Daniel Kinsman  
 GNU General Public License v3
 
-protobuf-net copyright 2008 Marc Gravell
+protobuf-net copyright 2008 Marc Gravell  
 Apache Licese v2.0
+
+Known Issues
+------------
+
+See https://github.com/DanielKinsman/stand-alone-map-view/issues
 
 Contact
 -------
