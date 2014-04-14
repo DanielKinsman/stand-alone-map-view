@@ -37,6 +37,9 @@ namespace StandAloneMapView.comms
         [ProtoMember(3)]
         public Orbit Orbit { get; set; }
 
+        [ProtoMember(4)]
+        public float Height;
+
         public Vessel()
         {
         }
@@ -46,6 +49,7 @@ namespace StandAloneMapView.comms
             this.Id = kspVessel.id;
             this.Name = kspVessel.vesselName;
             this.Orbit = new Orbit(kspVessel.orbit);
+            this.Height = Math.Min(kspVessel.GetHeightFromTerrain(), (float)kspVessel.altitude);
         }
     }
 }

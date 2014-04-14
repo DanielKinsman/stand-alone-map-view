@@ -32,6 +32,7 @@ namespace StandAloneMapView
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class Flight : utils.MonoBehaviourExtended
     {
+
         public SocketWorker socketWorker;
 
         public Flight()
@@ -75,24 +76,32 @@ namespace StandAloneMapView
                     return;
                 }
 
+                // We can't release launch clamps, so delete them
                 if(vessel.situation == Vessel.Situations.PRELAUNCH)
                     DestroyLaunchClamps(vessel);
 
-                // Vessels near the ground have a habit of exploding
-                var height = vessel.GetHeightFromSurface();
-                if(height > 0.0 && height < 100.0) // GetHeightFromSurface() returns -1 when in high orbit
+                // Vessels near the ground have a habit of exploding, so force them "on rails"
+                const float OFF_RAILS_HEIGHT = 300.0f;
+                var height = Math.Min(vessel.GetHeightFromTerrain(), (float)vessel.altitude);
+                if(height < OFF_RAILS_HEIGHT)
                 {
-                    vessel.GoOnRails();
-                    // todo find a way to determine when we are back in the clear
-                    // and can go back off rails. Unfortunately we can't use
-                    // GetHeightFromSurface() for this, as it doesn't get updated
-                    // when we are on rails.
-                    // Perhaps just transmit this height accross the wire?
-                    return;
+                    // Unfortunately GetHeightFromTerrain() doesn't get updated when on rails, so
+                    // we can't use it check when we should go back off rails. Instead we cheat and
+                    // send it across the wire.
+                    if(vesselUpdate.Height < OFF_RAILS_HEIGHT)
+                    {
+                        // We're close the the ground, prevent impact
+                        vessel.GoOnRails();
+                        return;
+                    }
+
+                    // We're now at a safe altitude
+                    vessel.GoOffRails();
                 }
 
                 if(vessel.orbitDriver.updateMode == OrbitDriver.UpdateMode.UPDATE)
                 {
+                    // Finally update the vessel's orbit from the network data
                     var orbit = vesselUpdate.Orbit.GetKspOrbit(FlightGlobals.Bodies);
                     vessel.orbit.UpdateFromOrbitAtUT(orbit, Planetarium.GetUniversalTime(), orbit.referenceBody);
                 }
@@ -111,11 +120,13 @@ namespace StandAloneMapView
 
         public void ForceMapView()
         {
+#if !DEBUG
             MapView.EnterMapView();
             var blocks = ControlTypes.MAP | ControlTypes.ACTIONS_SHIP | ControlTypes.ALL_SHIP_CONTROLS |
                     ControlTypes.GROUPS_ALL | ControlTypes.LINEAR | ControlTypes.QUICKLOAD | ControlTypes.QUICKSAVE |
                         ControlTypes.PAUSE | ControlTypes.TIMEWARP | ControlTypes.VESSEL_SWITCHING;
             InputLockManager.SetControlLock(blocks, "stand-alone-map-view");
+#endif
         }
 
         public static void UpdateTime(comms.Time timeUpdate)
