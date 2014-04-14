@@ -64,39 +64,42 @@ namespace StandAloneMapView
                 UpdateTime(this.socketWorker.TimeUpdate);
 
                 var vesselUpdate = this.socketWorker.VesselUpdate;
-                if(vesselUpdate != null)
+                var vessel = FlightGlobals.ActiveVessel;
+                if(vessel == null || vesselUpdate == null)
+                    return;
+
+                if(vesselUpdate.Id != vessel.id)
                 {
-                    if(vesselUpdate.Id != FlightGlobals.ActiveVessel.id)
-                    {
-                        // Vessel switched, tracking station code handles that
-                        TrackingStation.UpdateVessel(this, vesselUpdate);
-                        return;
-                    }
+                    // Vessel switched, tracking station code handles that
+                    TrackingStation.UpdateVessel(this, vesselUpdate);
+                    return;
+                }
 
-                    if(FlightGlobals.ActiveVessel.situation == Vessel.Situations.PRELAUNCH)
-                        DestroyLaunchClamps(FlightGlobals.ActiveVessel);
+                if(vessel.situation == Vessel.Situations.PRELAUNCH)
+                    DestroyLaunchClamps(vessel);
 
-                    // Vessels near the ground have a habit of exploding
-                    if(FlightGlobals.ActiveVessel.GetHeightFromSurface() < 100.0)
-                    {
-                        FlightGlobals.ActiveVessel.GoOnRails();
-                        // todo find a way to determine when we are back in the clear
-                        // and can go back off rails. Unfortunately we can't use
-                        // GetHeightFromSurface() for this, as it doesn't get updated
-                        // when we are on rails.
-                        // Perhaps just transmit this height accross the wire?
-                    }
+                // Vessels near the ground have a habit of exploding
+                var height = vessel.GetHeightFromSurface();
+                if(height > 0.0 && height < 100.0) // GetHeightFromSurface() returns -1 when in high orbit
+                {
+                    vessel.GoOnRails();
+                    // todo find a way to determine when we are back in the clear
+                    // and can go back off rails. Unfortunately we can't use
+                    // GetHeightFromSurface() for this, as it doesn't get updated
+                    // when we are on rails.
+                    // Perhaps just transmit this height accross the wire?
+                    return;
+                }
 
-                    if(FlightGlobals.ActiveVessel.orbitDriver.updateMode == OrbitDriver.UpdateMode.UPDATE)
-                    {
-                        var orbit = vesselUpdate.Orbit.GetKspOrbit(FlightGlobals.Bodies);
-                        FlightGlobals.ActiveVessel.orbit.UpdateFromOrbitAtUT(orbit, Planetarium.GetUniversalTime(), orbit.referenceBody);
-                    }
-                    else if(FlightGlobals.ActiveVessel.orbitDriver.updateMode == OrbitDriver.UpdateMode.TRACK_Phys)
-                    {
-                        // We don't want physics to be calculated
-                        FlightGlobals.ActiveVessel.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
-                    }
+                if(vessel.orbitDriver.updateMode == OrbitDriver.UpdateMode.UPDATE)
+                {
+                    var orbit = vesselUpdate.Orbit.GetKspOrbit(FlightGlobals.Bodies);
+                    vessel.orbit.UpdateFromOrbitAtUT(orbit, Planetarium.GetUniversalTime(), orbit.referenceBody);
+                }
+                else if(vessel.orbitDriver.updateMode == OrbitDriver.UpdateMode.TRACK_Phys)
+                {
+                    // We don't want physics to be calculated
+                    vessel.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
                 }
             }
             catch(Exception e)
