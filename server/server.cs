@@ -35,6 +35,9 @@ namespace StandAloneMapView
         // user goes back to main menu.
         private static volatile Server instance = null;
 
+        protected bool saveSyncRequired = true;
+        public double lastUniversalTime = 0.0;
+
         public IPEndPoint clientEndPoint { get; set; }
         protected UdpClient socket;
 
@@ -56,9 +59,27 @@ namespace StandAloneMapView
             // User has just loaded a new game
             Server.instance = this;
             DontDestroyOnLoad(this.gameObject);
+
             Log("Starting udp server, sending to {0}:{1}", clientEndPoint.Address, clientEndPoint.Port);
             this.socket = new UdpClient();
             this.InvokeRepeating("UnityWorker", 0.0f, comms.Packet.updateInterval);
+            SubscribeToEvents();
+        }
+
+        public void SubscribeToEvents()
+        {
+            GameEvents.onVesselChange.Add(VesselChanged);
+            GameEvents.onVesselDestroy.Add(VesselDestroyed);
+            GameEvents.onNewVesselCreated.Add(VesselCreated);
+
+            // todo check that docking triggers sync
+        }
+
+        public void UnsubscribeFromEvents()
+        {
+            GameEvents.onVesselChange.Remove(VesselChanged);
+            GameEvents.onVesselDestroy.Remove(VesselDestroyed);
+            GameEvents.onNewVesselCreated.Remove(VesselCreated);
         }
 
         public override void OnDestroy()
@@ -69,6 +90,7 @@ namespace StandAloneMapView
             Server.instance = null;
             LogDebug("closing socket");
             this.socket.Close();
+            UnsubscribeFromEvents();
         }
 
         public void UnityWorker()
@@ -82,6 +104,13 @@ namespace StandAloneMapView
                 Destroy(this.gameObject);
             }
 
+            // No need for thread safety, bool is atomic
+            if(this.saveSyncRequired)
+            {
+                SaveSyncFile();
+                this.saveSyncRequired = false;
+            }
+
             // Don't send time or flight data when in the VAB, astronaut complex etc.
             if(!HighLogic.LoadedSceneHasPlanetarium)
             {
@@ -89,16 +118,21 @@ namespace StandAloneMapView
                 return;
             }
 
+            // No such thing as GameEvents.onQuickLoadOrRevert, so do it ourselves
+            if(Planetarium.GetUniversalTime() < this.lastUniversalTime)
+            {
+                LogDebug("Time went backwards (quickload?), pending save sync.");
+                this.saveSyncRequired = true;
+            }
+            this.lastUniversalTime = Planetarium.GetUniversalTime();
+
             try
             {
                 var packet = new comms.Packet();
                 packet.Time = new comms.Time(Planetarium.GetUniversalTime(), TimeWarp.CurrentRateIndex);
 
                 if(FlightGlobals.ActiveVessel != null)
-                {
                     packet.Vessel = new comms.Vessel(FlightGlobals.ActiveVessel);
-                }
-
 
                 byte[] buffer = packet.Make();
                 this.socket.BeginSend(buffer, buffer.Length, this.clientEndPoint, SendCallback, this.socket);
@@ -114,10 +148,34 @@ namespace StandAloneMapView
             }
         }
 
+        public void VesselChanged(Vessel vessel)
+        {
+            LogDebug ("Vessel changed ({0}, {1}), pending save sync.", vessel.name, vessel.id);
+            this.saveSyncRequired = true;
+        }
+
+        public void VesselDestroyed(Vessel vessel)
+        {
+            LogDebug ("Vessel destroyed ({0}, {1}), pending save sync.", vessel.name, vessel.id);
+            this.saveSyncRequired = true;
+        }
+
+        public void VesselCreated(Vessel vessel)
+        {
+            LogDebug ("Vessel created ({0}, {1}), spending save sync.", vessel.name, vessel.id);
+            this.saveSyncRequired = true;
+        }
+
         public static void SendCallback(IAsyncResult result)
         {
             var client = (UdpClient)result.AsyncState;
             client.EndSend(result);
+        }
+
+        public static void SaveSyncFile()
+        {
+            if(HighLogic.CurrentGame != null) // I shouldn't have to check this squad.
+                GamePersistence.SaveGame("samv_sync", "default", SaveMode.OVERWRITE);
         }
     }
 }

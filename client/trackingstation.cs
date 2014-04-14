@@ -21,6 +21,7 @@ along with Stand Alone Map View.  If not, see <http://www.gnu.org/licenses/>.
 
 using KSP;
 using System;
+using System.Linq;
 
 namespace StandAloneMapView
 {
@@ -57,30 +58,33 @@ namespace StandAloneMapView
             try
             {
                 Flight.UpdateTime(this.socketWorker.TimeUpdate);
-
-                var vesselUpdate = this.socketWorker.VesselUpdate;
-                if(vesselUpdate != null)
-                {
-                    // create new vessel (if required)
-                    // switch to it
-                    // this.socketWorker.Stop()
-
-                    // Attempt #1
-                    // FlightDriver.StartupBehaviour = FlightDriver.StartupBehaviours.NEW_FROM_FILE;
-                    // FlightDriver.newShipToLoadPath = "/some/path/to/a/dummy.craft";
-                    // HighLogic.LoadScene(GameScenes.FLIGHT);
-                    // Log fills with [EXC 12:06:55.265] NullReferenceException: Object reference not set to an instance of an object
-
-                    // Giving up for now, just use a dummy object in the save.
-                    this.socketWorker.Stop();
-                    FlightDriver.StartAndFocusVessel(HighLogic.CurrentGame, 0);
-                }
+                UpdateVessel(this, this.socketWorker.VesselUpdate);
             }
             catch(Exception e)
             {
                 LogException(e);
                 throw;
             }
+        }
+
+        public static void UpdateVessel(utils.MonoBehaviourExtended logger, comms.Vessel vesselUpdate)
+        {
+            if(vesselUpdate == null)
+                return;
+
+            // go through vessels
+            // find the one with the correct id
+            // switch to it
+
+            var vessel = FlightGlobals.Vessels.FirstOrDefault(v => v.id == vesselUpdate.Id);
+            if(vessel != null)
+            {
+                FlightDriver.StartAndFocusVessel(HighLogic.CurrentGame, FlightGlobals.Vessels.IndexOf(vessel));
+                return;
+            }
+
+            logger.Log("Vessel {0} not found, reloading save (vessel id {1})", vesselUpdate.Name, vesselUpdate.Id);
+            Startup.LoadSave();
         }
     }
 }

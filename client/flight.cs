@@ -21,6 +21,7 @@ along with Stand Alone Map View.  If not, see <http://www.gnu.org/licenses/>.
 
 using KSP;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -65,9 +66,26 @@ namespace StandAloneMapView
                 var vesselUpdate = this.socketWorker.VesselUpdate;
                 if(vesselUpdate != null)
                 {
-                    FlightGlobals.ActiveVessel.id = vesselUpdate.Id; // works?
-                    FlightGlobals.ActiveVessel.name = vesselUpdate.Name;
-                    FlightGlobals.ActiveVessel.vesselName = vesselUpdate.Name;
+                    if(vesselUpdate.Id != FlightGlobals.ActiveVessel.id)
+                    {
+                        // Vessel switched, tracking station code handles that
+                        TrackingStation.UpdateVessel(this, vesselUpdate);
+                        return;
+                    }
+
+                    if(FlightGlobals.ActiveVessel.situation == Vessel.Situations.PRELAUNCH)
+                        DestroyLaunchClamps(FlightGlobals.ActiveVessel);
+
+                    // Vessels near the ground have a habit of exploding
+                    if(FlightGlobals.ActiveVessel.GetHeightFromSurface() < 100.0)
+                    {
+                        FlightGlobals.ActiveVessel.GoOnRails();
+                        // todo find a way to determine when we are back in the clear
+                        // and can go back off rails. Unfortunately we can't use
+                        // GetHeightFromSurface() for this, as it doesn't get updated
+                        // when we are on rails.
+                        // Perhaps just transmit this height accross the wire?
+                    }
 
                     if(FlightGlobals.ActiveVessel.orbitDriver.updateMode == OrbitDriver.UpdateMode.UPDATE)
                     {
@@ -76,7 +94,7 @@ namespace StandAloneMapView
                     }
                     else if(FlightGlobals.ActiveVessel.orbitDriver.updateMode == OrbitDriver.UpdateMode.TRACK_Phys)
                     {
-                        // We're off rails, go back on rails
+                        // We don't want physics to be calculated
                         FlightGlobals.ActiveVessel.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
                     }
                 }
@@ -109,6 +127,17 @@ namespace StandAloneMapView
 
             if(TimeWarp.CurrentRateIndex != timeUpdate.TimeWarpRateIndex)
                 TimeWarp.SetRate(timeUpdate.TimeWarpRateIndex, false);
+        }
+
+        public static void DestroyLaunchClamps(Vessel vessel)
+        {
+            // thanks go to hyper edit
+            if(vessel == null || vessel.parts == null)
+                return;
+
+            var clamps = vessel.parts.Where(p => p.Modules != null && p.Modules.OfType<LaunchClamp>().Any()).ToList();
+            foreach(var clamp in clamps)
+                clamp.Die();
         }
     }
 }
