@@ -44,7 +44,6 @@ namespace StandAloneMapView
         {
             MapView.OnExitMapView += () => ForceMapView();
             this.Invoke("ForceMapView", 0.25f); // Call it directly in Start() and it doesn't work.
-            this.InvokeRepeating("UnityWorker", 0.0f, comms.Packet.updateInterval);
             this.socketWorker.Start();
         }
 
@@ -55,6 +54,11 @@ namespace StandAloneMapView
                 this.socketWorker.Stop();
                 this.socketWorker = null;
             }
+        }
+
+        public override void Update()
+        {
+            UnityWorker();
         }
 
         public void UnityWorker()

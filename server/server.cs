@@ -66,7 +66,6 @@ namespace StandAloneMapView
 
             Log("Starting udp server, sending to {0}:{1}", clientEndPoint.Address, clientEndPoint.Port);
             this.socket = new UdpClient();
-            this.InvokeRepeating("UnityWorker", 0.0f, comms.Packet.updateInterval);
             SubscribeToEvents();
 
             this.tcpWorker.Start();
@@ -98,6 +97,11 @@ namespace StandAloneMapView
             this.socket.Close();
             UnsubscribeFromEvents();
             this.tcpWorker.Stop();
+        }
+
+        public override void Update()
+        {
+            UnityWorker();
         }
 
         public void UnityWorker()
