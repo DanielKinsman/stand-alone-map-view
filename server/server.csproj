@@ -58,5 +58,6 @@
     <Compile Include="server.cs" />
     <Compile Include="startup.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="tcpworker.cs" />
   </ItemGroup>
 </Project>

@@ -30,6 +30,7 @@ namespace StandAloneMapView.utils
 
         public virtual void Awake(){}
         public virtual void Start(){}
+        public virtual void Update(){}
         public virtual void OnDestroy(){}
 
         public string LogFormat(string message, params object[] formatParams)

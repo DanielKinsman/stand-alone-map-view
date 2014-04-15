@@ -32,7 +32,6 @@ namespace StandAloneMapView
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class Flight : utils.MonoBehaviourExtended
     {
-
         public SocketWorker socketWorker;
 
         public Flight()

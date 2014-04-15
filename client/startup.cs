@@ -30,15 +30,33 @@ namespace StandAloneMapView
     public class Startup : utils.MonoBehaviourExtended
     {
         public const string SAVEFILE = "persistent";
+        public const string SAVEFILENAME = "persistent.sfs";
         public const string SAVEDIRECTORY = "stand_alone_map_viewer_dont_touch";
+
+        public static string SavePath
+        {
+            get
+            {
+                // KSP is naughty and stores savegames in the application directory.
+                var path = Path.Combine(
+                                Path.Combine(KSPUtil.ApplicationRootPath, "saves"),
+                                SAVEDIRECTORY);
+
+                Directory.CreateDirectory(path); //safe if already exists
+
+                return Path.Combine(path, SAVEFILENAME);
+            }
+        }
+
+        public bool firstLoadDone = false;
 
         public override void Start()
         {
             try
             {
+                TcpWorker.Instance.Start();
                 CheatOptions.NoCrashDamage = true;
                 CheatOptions.UnbreakableJoints = true;
-                LoadSave();
             }
             catch(Exception e)
             {
@@ -47,27 +65,21 @@ namespace StandAloneMapView
             }
         }
 
+        public override void Update()
+        {
+            if(this.firstLoadDone)
+                return;
+
+            if(TcpWorker.Instance.saveReceived.WaitOne(1))
+            {
+                this.firstLoadDone = true;
+                LoadSave();
+            }
+        }
+
         public static void LoadSave()
         {
-            const string SAVEFILENAME = "persistent.sfs";
             HighLogic.SaveFolder = SAVEDIRECTORY;
-
-            // KSP is naughty and stores savegames in the application directory.
-            var path = Path.Combine(
-                                Path.Combine(KSPUtil.ApplicationRootPath, "saves"),
-                                HighLogic.SaveFolder);
-
-            Directory.CreateDirectory(path); //safe if already exists
-
-            var origin = Path.Combine(
-                Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location),
-                SAVEFILENAME);
-
-            // temporary hack
-            origin = KSPUtil.ApplicationRootPath + "/../KSP_linux_server/saves/default/samv_sync.sfs";
-            var destination = Path.Combine(path, SAVEFILENAME);
-            File.Copy(origin, destination, true);
-
             var game = GamePersistence.LoadGame(SAVEFILE, HighLogic.SaveFolder, true, false);
             game.startScene = GameScenes.TRACKSTATION;
             game.Start();

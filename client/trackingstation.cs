@@ -58,7 +58,14 @@ namespace StandAloneMapView
             try
             {
                 Flight.UpdateTime(this.socketWorker.TimeUpdate);
-                UpdateVessel(this, this.socketWorker.VesselUpdate);
+
+                var tcpWorker = TcpWorker.Instance;
+                if(tcpWorker.saveReceived.WaitOne(1))
+                {
+                    LogDebug("Save updated");
+                    tcpWorker.saveReceived.Reset();
+                    UpdateVessel(this, this.socketWorker.VesselUpdate);
+                }
             }
             catch(Exception e)
             {

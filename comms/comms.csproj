@@ -54,5 +54,6 @@
     <Compile Include="vessel.cs" />
     <Compile Include="orbit.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="save.cs" />
   </ItemGroup>
 </Project>

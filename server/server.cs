@@ -24,6 +24,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization;
+using System.Threading;
 using UnityEngine;
 
 namespace StandAloneMapView
@@ -41,10 +42,13 @@ namespace StandAloneMapView
         public IPEndPoint clientEndPoint { get; set; }
         protected UdpClient socket;
 
+        protected TcpWorker tcpWorker;
+
         public Server()
         {
             this.clientEndPoint = new IPEndPoint(IPAddress.Loopback, 8397);
             this.LogPrefix = "samv server";
+            this.tcpWorker = new TcpWorker();
         }
 
         public override void Awake()
@@ -64,6 +68,8 @@ namespace StandAloneMapView
             this.socket = new UdpClient();
             this.InvokeRepeating("UnityWorker", 0.0f, comms.Packet.updateInterval);
             SubscribeToEvents();
+
+            this.tcpWorker.Start();
         }
 
         public void SubscribeToEvents()
@@ -91,6 +97,7 @@ namespace StandAloneMapView
             LogDebug("closing socket");
             this.socket.Close();
             UnsubscribeFromEvents();
+            this.tcpWorker.Stop();
         }
 
         public void UnityWorker()
@@ -107,7 +114,7 @@ namespace StandAloneMapView
             // No need for thread safety, bool is atomic
             if(this.saveSyncRequired)
             {
-                SaveSyncFile();
+                this.SaveSyncFile();
                 this.saveSyncRequired = false;
             }
 
@@ -166,16 +173,18 @@ namespace StandAloneMapView
             this.saveSyncRequired = true;
         }
 
+        public void SaveSyncFile()
+        {
+            if(HighLogic.CurrentGame == null)
+                return;
+
+            this.tcpWorker.Save = comms.Save.FromCurrentGame();
+        }
+
         public static void SendCallback(IAsyncResult result)
         {
             var client = (UdpClient)result.AsyncState;
             client.EndSend(result);
-        }
-
-        public static void SaveSyncFile()
-        {
-            if(HighLogic.CurrentGame != null) // I shouldn't have to check this squad.
-                GamePersistence.SaveGame("samv_sync", "default", SaveMode.OVERWRITE);
         }
     }
 }

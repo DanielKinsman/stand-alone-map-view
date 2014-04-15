@@ -40,6 +40,7 @@
     <Compile Include="socketworker.cs" />
     <Compile Include="trackingstation.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="tcpworker.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\comms\comms.csproj">
