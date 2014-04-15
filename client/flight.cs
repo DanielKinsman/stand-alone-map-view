@@ -82,12 +82,14 @@ namespace StandAloneMapView
                 // Vessels near the ground have a habit of exploding, so force them "on rails"
                 const float OFF_RAILS_HEIGHT = 300.0f;
                 var height = Math.Min(vessel.GetHeightFromTerrain(), (float)vessel.altitude);
-                if(height < OFF_RAILS_HEIGHT)
+
+                // Careful, GetHeightFromTerrain() returns -1 in high orbit
+                if(height > 0.0f && height < OFF_RAILS_HEIGHT)
                 {
                     // Unfortunately GetHeightFromTerrain() doesn't get updated when on rails, so
                     // we can't use it check when we should go back off rails. Instead we cheat and
                     // send it across the wire.
-                    if(vesselUpdate.Height < OFF_RAILS_HEIGHT)
+                    if(vesselUpdate.Height > 0.0f && vesselUpdate.Height < OFF_RAILS_HEIGHT)
                     {
                         // We're close the the ground, prevent impact
                         vessel.GoOnRails();
