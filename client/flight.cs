@@ -107,6 +107,11 @@ namespace StandAloneMapView
 
                     // We're now at a safe altitude
                     vessel.GoOffRails();
+
+                    // Sometimes the vessel can get stuck in the landed state,
+                    // most often when starting a new launch first thing after
+                    // starting the game. See issue #17.
+                    vessel.checkLanded();
                 }
 
                 if(vessel.orbitDriver.updateMode == OrbitDriver.UpdateMode.UPDATE)
