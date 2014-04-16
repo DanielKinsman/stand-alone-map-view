@@ -64,9 +64,4 @@
     </Reference>
     <Reference Include="System.Core" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="persistent.sfs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 </Project>
