@@ -33,7 +33,9 @@ namespace StandAloneMapView
         protected bool runWorker = true;
         public string savePath;
         public ManualResetEvent saveReceived;
-        protected bool pullUpdate = true;
+
+        protected object _saveFileLock = new object();
+        public object SaveFileLock { get { return _saveFileLock; } }
 
         protected static volatile TcpWorker instance = null;
         public static TcpWorker Instance
@@ -65,11 +67,6 @@ namespace StandAloneMapView
             this.runWorker = false;
         }
 
-        public void PullUpdate()
-        {
-            this.pullUpdate = true;
-        }
-
         public void Worker()
         {
             while(this.runWorker)
@@ -83,10 +80,7 @@ namespace StandAloneMapView
                         while(this.runWorker && client.Connected)
                         {
                             var stream = client.GetStream();
-                            if(this.pullUpdate)
-                                stream.BeginWrite(new byte[] {0}, 0, 1, SendCallback, client);
-
-                            comms.Save.ReadAndSave(stream, this.savePath);
+                            comms.Save.ReadAndSave(stream, this.savePath, this.SaveFileLock);
                             this.saveReceived.Set();
                         }
 
@@ -102,12 +96,6 @@ namespace StandAloneMapView
 
                 Thread.Sleep(500);
             }
-        }
-
-        public void SendCallback(IAsyncResult result)
-        {
-            var stream = (Stream)result.AsyncState;
-            stream.EndWrite(result);
         }
     }
 }

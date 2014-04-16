@@ -118,7 +118,11 @@ namespace StandAloneMapView
             // No need for thread safety, bool is atomic
             if(this.saveSyncRequired)
             {
-                this.SaveSyncFile();
+                // Sometimes when switching the scene (i.e. going back to the
+                // space center) the save itself doesn't contain any ships
+                // temporarily. Delay the sync file a little to compensate.
+                if(!this.IsInvoking("SaveSyncFile"))
+                    this.Invoke("SaveSyncFile", 2.0f);
                 this.saveSyncRequired = false;
             }
 

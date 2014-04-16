@@ -70,7 +70,12 @@ namespace StandAloneMapView
                 var vesselUpdate = this.socketWorker.VesselUpdate;
                 var vessel = FlightGlobals.ActiveVessel;
                 if(vessel == null || vesselUpdate == null)
+                {
+                    // Main process has probably gone back to space center,
+                    // so let's go back to the tracking station.
+                    HighLogic.LoadScene(GameScenes.TRACKSTATION);
                     return;
+                }
 
                 if(vesselUpdate.Id != vessel.id)
                 {

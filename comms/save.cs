@@ -69,11 +69,14 @@ namespace StandAloneMapView.comms
             formatter.Serialize(stream, this.Node);
         }
 
-        public static void ReadAndSave(Stream stream, string file)
+        public static void ReadAndSave(Stream stream, string file, object fileLock)
         {
             var formatter = new BinaryFormatter();
             var node = (ConfigNode)formatter.Deserialize(stream);
-            node.Save(file);
+            lock(fileLock)
+            {
+                node.Save(file);
+            }
         }
     }
 }

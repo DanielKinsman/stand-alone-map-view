@@ -107,8 +107,7 @@ namespace StandAloneMapView
                     if(packet.Time != null)
                         this.TimeUpdate = packet.Time;
 
-                    if(packet.Vessel != null)
-                        this.VesselUpdate = packet.Vessel;
+                    this.VesselUpdate = packet.Vessel;
                 }
                 catch(System.IO.IOException)
                 {

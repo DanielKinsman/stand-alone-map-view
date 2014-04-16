@@ -70,7 +70,7 @@ namespace StandAloneMapView
             if(this.firstLoadDone)
                 return;
 
-            if(TcpWorker.Instance.saveReceived.WaitOne(1))
+            if(TcpWorker.Instance.saveReceived.WaitOne(0))
             {
                 this.firstLoadDone = true;
                 LoadSave();
@@ -80,7 +80,13 @@ namespace StandAloneMapView
         public static void LoadSave()
         {
             HighLogic.SaveFolder = SAVEDIRECTORY;
-            var game = GamePersistence.LoadGame(SAVEFILE, HighLogic.SaveFolder, true, false);
+
+            Game game;
+            lock(TcpWorker.Instance.SaveFileLock)
+            {
+                game = GamePersistence.LoadGame(SAVEFILE, HighLogic.SaveFolder, true, false);
+            }
+
             game.startScene = GameScenes.TRACKSTATION;
             game.Start();
         }

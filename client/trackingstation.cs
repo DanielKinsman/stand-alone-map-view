@@ -57,15 +57,15 @@ namespace StandAloneMapView
         {
             try
             {
-                Flight.UpdateTime(this.socketWorker.TimeUpdate);
-
-                var tcpWorker = TcpWorker.Instance;
-                if(tcpWorker.saveReceived.WaitOne(1))
+                if(TcpWorker.Instance.saveReceived.WaitOne(0))
                 {
-                    LogDebug("Save updated");
-                    tcpWorker.saveReceived.Reset();
-                    UpdateVessel(this, this.socketWorker.VesselUpdate);
+                    LogDebug("New save received from server, reloading.");
+                    TcpWorker.Instance.saveReceived.Reset();
+                    Startup.LoadSave();
                 }
+
+                Flight.UpdateTime(this.socketWorker.TimeUpdate);
+                UpdateVessel(this, this.socketWorker.VesselUpdate);
             }
             catch(Exception e)
             {
