@@ -28,8 +28,9 @@ namespace StandAloneMapView
     {
         public override void Awake()
         {
-            // go back to tracking station
-            HighLogic.LoadScene(GameScenes.TRACKSTATION);
+            // Player has quit tracking station.
+            // Go back to main menu.
+            HighLogic.LoadScene(GameScenes.MAINMENU);
         }
     }
 }

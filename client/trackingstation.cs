@@ -57,10 +57,10 @@ namespace StandAloneMapView
         {
             try
             {
-                if(TcpWorker.Instance.saveReceived.WaitOne(0))
+                if(TcpWorker.Instance.SaveReceived.WaitOne(0))
                 {
                     LogDebug("New save received from server, reloading.");
-                    TcpWorker.Instance.saveReceived.Reset();
+                    TcpWorker.Instance.SaveReceived.Reset();
                     Startup.LoadSave();
                 }
 

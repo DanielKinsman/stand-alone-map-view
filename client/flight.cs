@@ -135,13 +135,11 @@ namespace StandAloneMapView
 
         public void ForceMapView()
         {
-#if !DEBUG
             MapView.EnterMapView();
             var blocks = ControlTypes.MAP | ControlTypes.ACTIONS_SHIP | ControlTypes.ALL_SHIP_CONTROLS |
                     ControlTypes.GROUPS_ALL | ControlTypes.LINEAR | ControlTypes.QUICKLOAD | ControlTypes.QUICKSAVE |
-                        ControlTypes.PAUSE | ControlTypes.TIMEWARP | ControlTypes.VESSEL_SWITCHING;
+                        ControlTypes.TIMEWARP | ControlTypes.VESSEL_SWITCHING;
             InputLockManager.SetControlLock(blocks, "stand-alone-map-view");
-#endif
         }
 
         public static void UpdateTime(comms.Time timeUpdate)

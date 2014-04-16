@@ -48,7 +48,29 @@ namespace StandAloneMapView
             }
         }
 
+        public bool start = false;
         public bool firstLoadDone = false;
+        public TextButton3D startButton;
+
+        public Startup()
+        {
+            this.LogPrefix = "samv";
+        }
+
+        public override void Awake()
+        {
+            var menu = FindObjectOfType<MainMenu>();
+            menu.startBtn.GetComponent<TextMesh>().text = "";
+            this.startButton = (TextButton3D)TextButton3D.Instantiate(menu.startBtn);
+            this.startButton.GetComponent<TextMesh>().text = "Waiting for server sync...";
+            this.startButton.onPressed = new Callback(StartButtonPressed);
+            Destroy(menu.startBtn);
+        }
+
+        public void StartButtonPressed()
+        {
+            this.start = true;
+        }
 
         public override void Start()
         {
@@ -68,11 +90,14 @@ namespace StandAloneMapView
         public override void Update()
         {
             if(this.firstLoadDone)
-                return;
+                this.startButton.GetComponent<TextMesh>().text = "Start map view";
 
-            if(TcpWorker.Instance.saveReceived.WaitOne(0))
-            {
+            if(TcpWorker.Instance.AtLeastOneSaveReceived.WaitOne(0))
                 this.firstLoadDone = true;
+
+            if(this.firstLoadDone && this.start)
+            {
+                this.start = false;
                 LoadSave();
             }
         }

@@ -32,7 +32,8 @@ namespace StandAloneMapView
         protected IPEndPoint serverEndPoint;
         protected bool runWorker = true;
         public string savePath;
-        public ManualResetEvent saveReceived;
+        public ManualResetEvent SaveReceived;
+        public ManualResetEvent AtLeastOneSaveReceived;
 
         protected object _saveFileLock = new object();
         public object SaveFileLock { get { return _saveFileLock; } }
@@ -53,7 +54,8 @@ namespace StandAloneMapView
         {
             this.serverEndPoint = new IPEndPoint(IPAddress.Loopback, 8398);
             this.savePath = savePath;
-            saveReceived = new ManualResetEvent(false);
+            this.SaveReceived = new ManualResetEvent(false);
+            this.AtLeastOneSaveReceived = new ManualResetEvent(false);
         }
 
         public void Start()
@@ -81,7 +83,8 @@ namespace StandAloneMapView
                         {
                             var stream = client.GetStream();
                             comms.Save.ReadAndSave(stream, this.savePath, this.SaveFileLock);
-                            this.saveReceived.Set();
+                            this.AtLeastOneSaveReceived.Set();
+                            this.SaveReceived.Set();
                         }
 
                         client.Close();
