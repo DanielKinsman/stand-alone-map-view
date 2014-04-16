@@ -144,7 +144,7 @@ namespace StandAloneMapView
             try
             {
                 var packet = new comms.Packet();
-                packet.Time = new comms.Time(Planetarium.GetUniversalTime(), TimeWarp.CurrentRateIndex);
+                packet.Time = new comms.Time(Planetarium.GetUniversalTime(), TimeWarp.CurrentRateIndex, TimeWarp.CurrentRate);
 
                 if(FlightGlobals.ActiveVessel != null)
                     packet.Vessel = new comms.Vessel(FlightGlobals.ActiveVessel);

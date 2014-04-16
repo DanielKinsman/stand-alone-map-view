@@ -149,6 +149,14 @@ namespace StandAloneMapView
             if(Math.Abs(Planetarium.GetUniversalTime() - timeUpdate.UniversalTime) > maxTimeDelta)
                 Planetarium.SetUniversalTime(timeUpdate.UniversalTime);
 
+            if(timeUpdate.TimeWarpRate > 1.0f && timeUpdate.TimeWarpRate <= 4.0f)
+            {
+                // Server most likely physics warping. We can't do that, so just set it to 1x.
+                if(TimeWarp.CurrentRateIndex != 0)
+                    TimeWarp.SetRate(0, false);
+                return;
+            }
+
             if(TimeWarp.CurrentRateIndex != timeUpdate.TimeWarpRateIndex)
                 TimeWarp.SetRate(timeUpdate.TimeWarpRateIndex, false);
         }
