@@ -23,7 +23,7 @@ using KSP;
 using System;
 using System.Linq;
 
-namespace StandAloneMapView
+namespace StandAloneMapView.client
 {
     [KSPAddon(KSPAddon.Startup.TrackingStation, false)]
     public class TrackingStation : utils.MonoBehaviourExtended

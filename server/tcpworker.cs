@@ -25,7 +25,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace StandAloneMapView
+namespace StandAloneMapView.server
 {
     public class TcpWorker
     {
@@ -52,12 +52,15 @@ namespace StandAloneMapView
 
         public TcpWorker()
         {
-            this.listenerEndPoint = new IPEndPoint(IPAddress.Loopback, 8398);
-            this.listener = new TcpListener(this.listenerEndPoint);
+
         }
 
         public void Start()
         {
+            this.Stop();
+            Settings settings = Settings.Load();
+            this.listenerEndPoint = new IPEndPoint(IPAddress.Loopback, settings.ListenPort);
+            this.listener = new TcpListener(this.listenerEndPoint);
             this.runWorker = true;
             new Thread(Worker).Start();
         }
@@ -65,7 +68,8 @@ namespace StandAloneMapView
         public void Stop()
         {
             this.runWorker = false;
-            this.listener.Stop();
+            if(this.listener != null)
+                this.listener.Stop();
         }
 
         public void Worker()

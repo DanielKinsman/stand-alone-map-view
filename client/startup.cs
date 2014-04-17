@@ -24,7 +24,7 @@ using System;
 using System.IO;
 using UnityEngine;
 
-namespace StandAloneMapView
+namespace StandAloneMapView.client
 {
     [KSPAddon(KSPAddon.Startup.MainMenu, false)]
     public class Startup : utils.MonoBehaviourExtended
@@ -47,6 +47,8 @@ namespace StandAloneMapView
                 return Path.Combine(path, SAVEFILENAME);
             }
         }
+
+        public Settings Settings;
 
         public bool start = false;
         public bool firstLoadDone = false;
@@ -79,6 +81,9 @@ namespace StandAloneMapView
                 TcpWorker.Instance.Start();
                 CheatOptions.NoCrashDamage = true;
                 CheatOptions.UnbreakableJoints = true;
+
+                this.Settings = Settings.Load();
+                this.start = this.Settings.StartAutomatically;
             }
             catch(Exception e)
             {

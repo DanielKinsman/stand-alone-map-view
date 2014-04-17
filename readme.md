@@ -26,7 +26,6 @@ Current Features
 Feature Wishlist
 ----------------
 
-* Configurable ip adress/port settings
 * Syncing of manoeuver nodes (bidirectional)
 * [and many more][1]
 
@@ -53,7 +52,12 @@ Stand Alone Map View copyright 2014 Daniel Kinsman
 GNU General Public License v3
 
 protobuf-net copyright 2008 Marc Gravell  
-Apache Licese v2.0
+Apache Licese v2.0  
+https://code.google.com/p/protobuf-net/
+
+ToolbarWrapper copyright 2013-2014 Maik Schreiber  
+BSD 2-Clause License  
+https://github.com/blizzy78/ksp_toolbar
 
 Contact
 -------

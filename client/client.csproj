@@ -41,6 +41,7 @@
     <Compile Include="trackingstation.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="tcpworker.cs" />
+    <Compile Include="settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\comms\comms.csproj">

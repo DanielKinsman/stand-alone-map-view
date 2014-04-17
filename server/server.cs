@@ -27,7 +27,7 @@ using System.Runtime.Serialization;
 using System.Threading;
 using UnityEngine;
 
-namespace StandAloneMapView
+namespace StandAloneMapView.server
 {
     [KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
     public class Server : utils.MonoBehaviourExtended

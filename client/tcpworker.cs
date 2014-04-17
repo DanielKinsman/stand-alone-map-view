@@ -25,7 +25,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace StandAloneMapView
+namespace StandAloneMapView.client
 {
     public class TcpWorker
     {
@@ -52,7 +52,6 @@ namespace StandAloneMapView
 
         protected TcpWorker(string savePath)
         {
-            this.serverEndPoint = new IPEndPoint(IPAddress.Loopback, 8398);
             this.savePath = savePath;
             this.SaveReceived = new ManualResetEvent(false);
             this.AtLeastOneSaveReceived = new ManualResetEvent(false);
@@ -60,6 +59,12 @@ namespace StandAloneMapView
 
         public void Start()
         {
+            this.Stop();
+
+            var settings = Settings.Load();
+            IPAddress serverAddress = Dns.GetHostAddresses(settings.Server)[0];
+            this.serverEndPoint = new IPEndPoint(serverAddress, settings.ServerPort);
+
             this.runWorker = true;
             new Thread(Worker).Start();
         }
@@ -67,6 +72,8 @@ namespace StandAloneMapView
         public void Stop()
         {
             this.runWorker = false;
+            // todo make sure the socket read doesn't block forever preventing
+            // actual shutdown. Consider calling client.Close().
         }
 
         public void Worker()

@@ -21,7 +21,7 @@ along with Stand Alone Map View.  If not, see <http://www.gnu.org/licenses/>.
 
 using KSP;
 
-namespace StandAloneMapView
+namespace StandAloneMapView.client
 {
     [KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
     public class SpaceCenter : utils.MonoBehaviourExtended

@@ -23,6 +23,7 @@ release.tar.gz: release
 	cp -v license $(MOD_DIR)
 	cp -v readme.md $(MOD_DIR)
 	cp -v lib/protobuf-net_licence $(MOD_DIR)
+	cp -v utils/ksp_toolbar_license $(MOD_DIR)
 	pushd $(TEMP_DIR); tar -cavf release.tar.gz $(MOD_NAME); popd
 	mv -v $(TEMP_DIR)/release.tar.gz ./release.tar.gz
 	rm -rfv $(TEMP_DIR)
@@ -35,11 +36,10 @@ release.zip: release
 	cp -v license $(MOD_DIR)
 	cp -v readme.md $(MOD_DIR)
 	cp -v lib/protobuf-net_licence $(MOD_DIR)
+	cp -v utils/ksp_toolbar_license $(MOD_DIR)
 	pushd $(TEMP_DIR); zip -r release.zip $(MOD_NAME); popd
 	mv -v $(TEMP_DIR)/release.zip ./release.zip
 	rm -rfv $(TEMP_DIR)
-
-
 
 clean:
 	$(MDTOOL) build -t:Clean -c:"Release" StandAloneMapView.sln

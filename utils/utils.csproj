@@ -36,6 +36,8 @@
   <ItemGroup>
     <Compile Include="MonoBehaviourExtended.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="ToolbarWrapper.cs" />
+    <Compile Include="settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
@@ -46,5 +48,6 @@
       <HintPath>..\lib\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Core" />
   </ItemGroup>
 </Project>

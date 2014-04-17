@@ -27,7 +27,7 @@ using System.Net.Sockets;
 using System.Threading;
 using UnityEngine;
 
-namespace StandAloneMapView
+namespace StandAloneMapView.client
 {
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class Flight : utils.MonoBehaviourExtended

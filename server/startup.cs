@@ -25,7 +25,7 @@ along with Stand Alone Map View.  If not, see <http://www.gnu.org/licenses/>.
 using KSP;
 using UnityEngine;
 
-namespace StandAloneMapView
+namespace StandAloneMapView.server
 {
     [KSPAddon(KSPAddon.Startup.MainMenu, false)]
     public class Startup : utils.MonoBehaviourExtended
