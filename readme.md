@@ -45,6 +45,8 @@ Minimum requirements
 * 4 core processor
 * 6GB RAM
 
+Or a separate computer to run the map view on.
+
 Licenses
 --------
 
@@ -58,6 +60,11 @@ https://code.google.com/p/protobuf-net/
 ToolbarWrapper copyright 2013-2014 Maik Schreiber  
 BSD 2-Clause License  
 https://github.com/blizzy78/ksp_toolbar
+
+Parts of the code based on KSP Plugin Framework  
+KSP Plugin Framework copyright 2014 TriggerAu  
+MIT License  
+https://ksppluginframework.codeplex.com/
 
 Contact
 -------
