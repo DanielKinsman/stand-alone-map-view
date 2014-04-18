@@ -30,6 +30,7 @@ namespace StandAloneMapView.client
     public class TcpWorker
     {
         protected IPEndPoint serverEndPoint;
+        public TcpClient Client;
         protected bool runWorker = true;
         public string savePath;
         public ManualResetEvent SaveReceived;
@@ -72,8 +73,11 @@ namespace StandAloneMapView.client
         public void Stop()
         {
             this.runWorker = false;
-            // todo make sure the socket read doesn't block forever preventing
-            // actual shutdown. Consider calling client.Close().
+            if(this.Client != null)
+                this.Client.Close();
+
+            this.AtLeastOneSaveReceived.Reset();
+            this.SaveReceived.Reset();
         }
 
         public void Worker()
@@ -82,19 +86,19 @@ namespace StandAloneMapView.client
             {
                 try
                 {
-                    using(var client = new TcpClient())
+                    using(this.Client = new TcpClient())
                     {
-                        client.Connect(this.serverEndPoint);
+                        this.Client.Connect(this.serverEndPoint);
                     
-                        while(this.runWorker && client.Connected)
+                        while(this.runWorker && this.Client.Connected)
                         {
-                            var stream = client.GetStream();
+                            var stream = this.Client.GetStream();
                             comms.Save.ReadAndSave(stream, this.savePath, this.SaveFileLock);
                             this.AtLeastOneSaveReceived.Set();
                             this.SaveReceived.Set();
                         }
 
-                        client.Close();
+                        this.Client.Close();
                     }
                 }
                 catch(Exception e)

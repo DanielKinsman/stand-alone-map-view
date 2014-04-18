@@ -67,6 +67,9 @@ namespace StandAloneMapView.client
             this.startButton.GetComponent<TextMesh>().text = "Waiting for server sync...";
             this.startButton.onPressed = new Callback(StartButtonPressed);
             Destroy(menu.startBtn);
+
+            this.ShowGUI = true;
+            this.WindowCaption = "Stand alone map view settings";
         }
 
         public void StartButtonPressed()
@@ -83,7 +86,7 @@ namespace StandAloneMapView.client
                 CheatOptions.UnbreakableJoints = true;
 
                 this.Settings = Settings.Load();
-                this.start = this.Settings.StartAutomatically;
+                this.Reset();
             }
             catch(Exception e)
             {
@@ -105,6 +108,49 @@ namespace StandAloneMapView.client
                 this.start = false;
                 LoadSave();
             }
+        }
+
+        public void Reset()
+        {
+            TcpWorker.Instance.Stop();
+            TcpWorker.Instance.Start();
+            this.start = this.Settings.StartAutomatically;
+            this.firstLoadDone = false;
+            this.startButton.GetComponent<TextMesh>().text = "Waiting for server sync...";
+        }
+
+        public override void DrawWindow(int id)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("server ip/hostname:");
+            this.Settings.Server = GUILayout.TextField(this.Settings.Server);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("server tcp port:");
+            this.Settings.ServerPort=Convert.ToInt32(
+                GUILayout.TextField(this.Settings.ServerPort.ToString()));
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("udp receiving port:");
+            this.Settings.RecievePort=Convert.ToInt32(
+                GUILayout.TextField(this.Settings.RecievePort.ToString()));
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Start automatically:");
+            this.Settings.StartAutomatically=Convert.ToBoolean(
+                GUILayout.Toggle(this.Settings.StartAutomatically, string.Empty));
+            GUILayout.EndHorizontal();
+
+            if(GUILayout.Button("Set and save"))
+            {
+                this.Settings.Save();
+                this.Reset();
+            }
+
+            GUI.DragWindow();
         }
 
         public static void LoadSave()
