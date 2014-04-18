@@ -40,6 +40,9 @@ namespace StandAloneMapView.server
             }
         }
 
+        [Persistent]
+        public bool Enabled;
+
         // udp client host
         [Persistent]
         public string Client;
@@ -54,6 +57,7 @@ namespace StandAloneMapView.server
 
         public Settings()
         {
+            this.Enabled = true;
             this.Client = utils.Settings.DEFAULT_CLIENT;
             this.ClientPort = utils.Settings.DEFAULT_CLIENT_PORT;
             this.ListenPort = utils.Settings.DEFAULT_SERVER_PORT;

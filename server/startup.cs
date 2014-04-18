@@ -20,9 +20,10 @@ along with Stand Alone Map View.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-#if DEBUG
+
 
 using KSP;
+using System;
 using UnityEngine;
 
 namespace StandAloneMapView.server
@@ -30,19 +31,62 @@ namespace StandAloneMapView.server
     [KSPAddon(KSPAddon.Startup.MainMenu, false)]
     public class Startup : utils.MonoBehaviourExtended
     {
+        public Settings Settings;
+
         public Startup()
         {
             this.LogPrefix = "samv server";
         }
 
+        public override void Awake()
+        {
+            this.ShowGUI = true;
+            this.WindowCaption = "Stand alone map view settings";
+        }
+
         public override void Start()
         {
+            this.Settings = Settings.Load();
+#if DEBUG
+            // Automatically load default save for quicker testing
             HighLogic.SaveFolder = "default";
-            var game = GamePersistence.LoadGame("persistent", HighLogic.SaveFolder, true, false);
+            var game = GamePersistence.LoadGame("persistent",
+                                        HighLogic.SaveFolder, true, false);
             game.startScene = GameScenes.SPACECENTER;
             game.Start();
+#endif
+        }
+
+        public override void DrawWindow(int id)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Enabled:");
+            this.Settings.Enabled=Convert.ToBoolean(
+                GUILayout.Toggle(this.Settings.Enabled, string.Empty));
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("client ip/hostname:");
+            this.Settings.Client = GUILayout.TextField(this.Settings.Client);
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("client udp port:");
+            this.Settings.ClientPort=Convert.ToInt32(
+                GUILayout.TextField(this.Settings.ClientPort.ToString()));
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("tcp listen port:");
+            this.Settings.ListenPort=Convert.ToInt32(
+                GUILayout.TextField(this.Settings.ListenPort.ToString()));
+            GUILayout.EndHorizontal();
+
+            if(GUILayout.Button("Save"))
+                this.Settings.Save();
+
+            GUI.DragWindow();
         }
     }
 }
 
-#endif

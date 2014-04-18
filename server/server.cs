@@ -61,11 +61,18 @@ namespace StandAloneMapView.server
                 return;
             }
 
+            this.Settings = Settings.Load();
+            if(!this.Settings.Enabled)
+            {
+                // mod disabled, go away
+                Destroy(this.gameObject);
+                return;
+            }
+
             // User has just loaded a new game
             Server.instance = this;
             DontDestroyOnLoad(this.gameObject);
 
-            this.Settings = Settings.Load();
             this.SetupUdpClient();
             this.SubscribeToEvents();
             this.tcpWorker.Start();
