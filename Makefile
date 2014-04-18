@@ -9,11 +9,18 @@ MOD_DIR = $(TEMP_DIR)/$(MOD_NAME)/
 
 all: release debug
 
-release:
-	$(MDTOOL) build -t:Build -c:"Release" StandAloneMapView.sln
+toolbaricon.png: toolbaricon.svg
+	inkscape --export-png=toolbaricon.png toolbaricon.svg -h 24 -w 24 -z
 
-debug: $(CSHARP_SOURCE)
+release: toolbaricon.png
+	$(MDTOOL) build -t:Build -c:"Release" StandAloneMapView.sln
+	cp -fv toolbaricon.png server/bin/Release/
+	cp -fv toolbaricon.png client/bin/Release/
+
+debug:  toolbaricon.png
 	$(MDTOOL) build -t:Build -c:"Debug" StandAloneMapView.sln
+	cp -fv toolbaricon.png server/bin/Debug/
+	cp -fv toolbaricon.png client/bin/Debug/
 
 release.tar.gz: release
 	rm -fv release.tar.gz
@@ -47,3 +54,6 @@ clean:
 	rm -rfv $(CSHARP_BINDIRS)
 	rm -fv release.tar.gz
 	rm -fv release.zip
+
+# toolbaricon.png not included in clean deliberately, don't want to
+# require inkscape just to build.

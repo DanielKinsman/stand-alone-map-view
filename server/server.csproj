@@ -61,4 +61,10 @@
     <Compile Include="tcpworker.cs" />
     <Compile Include="settings.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\toolbaricon.png">
+      <Link>toolbaricon.png</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

@@ -32,6 +32,10 @@ namespace StandAloneMapView.server
     public class Startup : utils.MonoBehaviourExtended
     {
         public Settings Settings;
+        public const string TOOLBAR_NAMESPACE = "standalonemapview";
+        public const string TOOLBAR_ICON = "samv_server/toolbaricon";
+        public const string TOOLBAR_ID = "samv_settings";
+        protected utils.IButton showGUIButton;
 
         public Startup()
         {
@@ -40,14 +44,14 @@ namespace StandAloneMapView.server
 
         public override void Awake()
         {
-            this.ShowGUI = true;
             this.WindowCaption = "Stand alone map view settings";
+            ToolbarSetup();
         }
 
         public override void Start()
         {
             this.Settings = Settings.Load();
-#if DEBUG
+#if DEBUGfu
             // Automatically load default save for quicker testing
             HighLogic.SaveFolder = "default";
             var game = GamePersistence.LoadGame("persistent",
@@ -55,6 +59,33 @@ namespace StandAloneMapView.server
             game.startScene = GameScenes.SPACECENTER;
             game.Start();
 #endif
+        }
+
+        public override void OnDestroy()
+        {
+            // Delete these lines and the toobar button will show up in
+            // the space center, but not on the main menu.
+            // Looks like a bug in the toolbar.
+            if(this.showGUIButton != null)
+                this.showGUIButton.Destroy();
+        }
+
+        public void ToolbarSetup()
+        {
+            if(utils.ToolbarManager.ToolbarAvailable)
+            {
+                this.ShowGUI = true; // set to false when toolbar is working
+                this.showGUIButton = utils.ToolbarManager.Instance.add(
+                    TOOLBAR_NAMESPACE, TOOLBAR_ID);
+                this.showGUIButton.Visible = true;
+                this.showGUIButton.ToolTip = this.WindowCaption;
+                this.showGUIButton.TexturePath = TOOLBAR_ICON;
+                this.showGUIButton.OnClick += (e) => this.ShowGUI = !this.ShowGUI;
+            }
+            else
+            {
+                this.ShowGUI = true;
+            }
         }
 
         public override void DrawWindow(int id)
