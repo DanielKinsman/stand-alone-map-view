@@ -77,13 +77,11 @@ namespace StandAloneMapView.client
             }
         }
 
-        public SocketWorker()
-        {
-            this.clientEndPoint = new IPEndPoint(IPAddress.Loopback, 8397);
-        }
-
         public void Start()
         {
+            this.Stop();
+            var settings = Settings.Load();
+            this.clientEndPoint = new IPEndPoint(IPAddress.Loopback, settings.RecievePort);
             this.socket = new UdpClient(this.clientEndPoint);
             this.runThread = true;
             new Thread(Worker).Start();
@@ -92,7 +90,8 @@ namespace StandAloneMapView.client
         public void Stop()
         {
             this.runThread = false;
-            this.socket.Close();
+            if(this.socket != null)
+                this.socket.Close();
         }
 
         public void Worker()

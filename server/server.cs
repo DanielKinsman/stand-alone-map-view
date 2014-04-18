@@ -44,9 +44,10 @@ namespace StandAloneMapView.server
 
         protected TcpWorker tcpWorker;
 
+        public Settings Settings;
+
         public Server()
         {
-            this.clientEndPoint = new IPEndPoint(IPAddress.Loopback, 8397);
             this.LogPrefix = "samv server";
             this.tcpWorker = new TcpWorker();
         }
@@ -64,11 +65,18 @@ namespace StandAloneMapView.server
             Server.instance = this;
             DontDestroyOnLoad(this.gameObject);
 
-            Log("Starting udp server, sending to {0}:{1}", clientEndPoint.Address, clientEndPoint.Port);
-            this.socket = new UdpClient();
-            SubscribeToEvents();
-
+            this.Settings = Settings.Load();
+            this.SetupUdpClient();
+            this.SubscribeToEvents();
             this.tcpWorker.Start();
+        }
+
+        public void SetupUdpClient()
+        {
+            IPAddress clientAddress = Dns.GetHostAddresses(this.Settings.Client)[0];
+            this.clientEndPoint = new IPEndPoint(clientAddress, this.Settings.ClientPort);
+            Log("Starting udp server, sending to {0}:{1}", this.clientEndPoint.Address, this.clientEndPoint.Port);
+            this.socket = new UdpClient();
         }
 
         public void SubscribeToEvents()
