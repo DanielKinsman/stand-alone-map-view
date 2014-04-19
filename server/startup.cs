@@ -29,6 +29,7 @@ namespace StandAloneMapView.server
     public class Startup : utils.MonoBehaviourExtended
     {
         public Settings Settings;
+        public utils.ToggleableWindow toggleWindow;
 
         public Startup()
         {
@@ -37,8 +38,11 @@ namespace StandAloneMapView.server
 
         public override void Awake()
         {
-            this.WindowCaption = "Stand alone map view settings";
             this.ShowGUI = true;
+            this.toggleWindow = new utils.ToggleableWindow("samv_server/icon");
+            this.WindowCaption = "samv";
+            this.WindowBounds.width = 1;
+            this.WindowBounds.height = 1;
         }
 
         public override void Start()
@@ -54,7 +58,43 @@ namespace StandAloneMapView.server
 #endif
         }
 
+        public override void DrawGUI()
+        {
+            if(this.toggleWindow.WasToggled)
+            {
+                if(this.toggleWindow.IsOn)
+                {
+                    this.WindowCaption = "Stand alone map view settings";
+                    this.WindowBounds.width = 250;
+                    this.WindowBounds.height = 100;
+                }
+                else
+                {
+                    this.WindowCaption = "samv";
+                    this.WindowBounds.width = this.toggleWindow.CompactedWidth;
+                    this.WindowBounds.height = this.toggleWindow.CompactedHeight;
+                }
+            }
+
+            base.DrawGUI();
+        }
+
+        public override void OnGUI()
+        {
+            this.toggleWindow.OnGUI();
+        }
+
         public override void DrawWindow(int id)
+        {
+            this.toggleWindow.DrawWindow();
+
+            if(this.toggleWindow.IsOn)
+                DrawWindowContents();
+
+            GUI.DragWindow();
+        }
+
+        public void DrawWindowContents()
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label("Enabled:");
@@ -81,9 +121,6 @@ namespace StandAloneMapView.server
 
             if(GUILayout.Button("Save"))
                 this.Settings.Save();
-
-            GUI.DragWindow();
         }
     }
 }
-
