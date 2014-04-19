@@ -50,11 +50,6 @@ namespace StandAloneMapView.client
 
         public Settings Settings;
 
-        public const string TOOLBAR_NAMESPACE = "standalonemapview";
-        public const string TOOLBAR_ICON = "samv_client/toolbaricon";
-        public const string TOOLBAR_ID = "samv_settings";
-        protected utils.IButton showGUIButton;
-
         public bool start = false;
         public bool firstLoadDone = false;
         public TextButton3D startButton;
@@ -74,24 +69,7 @@ namespace StandAloneMapView.client
             Destroy(menu.startBtn);
 
             this.WindowCaption = "Stand alone map view settings";
-            this.ToolbarSetup();
-        }
-
-        public void ToolbarSetup()
-        {
-            if(utils.ToolbarManager.ToolbarAvailable)
-            {
-                this.ShowGUI = true; // set to false when toolbar is working
-                this.showGUIButton = utils.ToolbarManager.Instance.add(
-                    TOOLBAR_NAMESPACE, TOOLBAR_ID);
-                this.showGUIButton.ToolTip = this.WindowCaption;
-                this.showGUIButton.TexturePath = TOOLBAR_ICON;
-                this.showGUIButton.OnClick += (e) => this.ShowGUI = !this.ShowGUI;
-            }
-            else
-            {
-                this.ShowGUI = true;
-            }
+            this.ShowGUI = true;
         }
 
         public void StartButtonPressed()
@@ -115,15 +93,6 @@ namespace StandAloneMapView.client
                 LogException(e);
                 throw;
             }
-        }
-
-        public override void OnDestroy()
-        {
-            // Delete these lines and the toobar button will show up in
-            // the tracking station, but not on the main menu.
-            // Looks like a bug in the toolbar.
-            if(this.showGUIButton != null)
-                this.showGUIButton.Destroy();
         }
 
         public override void Update()

@@ -36,7 +36,6 @@
   <ItemGroup>
     <Compile Include="MonoBehaviourExtended.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="ToolbarWrapper.cs" />
     <Compile Include="settings.cs" />
   </ItemGroup>
   <ItemGroup>
