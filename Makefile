@@ -9,18 +9,18 @@ MOD_DIR = $(TEMP_DIR)/$(MOD_NAME)/
 
 all: release debug
 
-toolbaricon.png: toolbaricon.svg
-	inkscape --export-png=toolbaricon.png toolbaricon.svg -w 32 -z
+icon.png: icon.svg
+	inkscape --export-png=icon.png icon.svg -w 32 -z
 
-release: toolbaricon.png
+release: icon.png
 	$(MDTOOL) build -t:Build -c:"Release" StandAloneMapView.sln
-	cp -fv toolbaricon.png server/bin/Release/
-	cp -fv toolbaricon.png client/bin/Release/
+	cp -fv icon.png server/bin/Release/
+	cp -fv icon.png client/bin/Release/
 
-debug:  toolbaricon.png
+debug:  icon.png
 	$(MDTOOL) build -t:Build -c:"Debug" StandAloneMapView.sln
-	cp -fv toolbaricon.png server/bin/Debug/
-	cp -fv toolbaricon.png client/bin/Debug/
+	cp -fv icon.png server/bin/Debug/
+	cp -fv icon.png client/bin/Debug/
 
 release.tar.gz: release
 	rm -fv release.tar.gz
@@ -30,7 +30,6 @@ release.tar.gz: release
 	cp -v license $(MOD_DIR)
 	cp -v readme.md $(MOD_DIR)
 	cp -v lib/protobuf-net_licence $(MOD_DIR)
-	cp -v utils/ksp_toolbar_license $(MOD_DIR)
 	pushd $(TEMP_DIR); tar -cavf release.tar.gz $(MOD_NAME); popd
 	mv -v $(TEMP_DIR)/release.tar.gz ./release.tar.gz
 	rm -rfv $(TEMP_DIR)
@@ -43,7 +42,6 @@ release.zip: release
 	cp -v license $(MOD_DIR)
 	cp -v readme.md $(MOD_DIR)
 	cp -v lib/protobuf-net_licence $(MOD_DIR)
-	cp -v utils/ksp_toolbar_license $(MOD_DIR)
 	pushd $(TEMP_DIR); zip -r release.zip $(MOD_NAME); popd
 	mv -v $(TEMP_DIR)/release.zip ./release.zip
 	rm -rfv $(TEMP_DIR)
@@ -55,5 +53,5 @@ clean:
 	rm -fv release.tar.gz
 	rm -fv release.zip
 
-# toolbaricon.png not included in clean deliberately, don't want to
+# icon.png not included in clean deliberately, don't want to
 # require inkscape just to build.

@@ -71,7 +71,7 @@ namespace StandAloneMapView.client
             Destroy(menu.startBtn);
 
             this.ShowGUI = true;
-            this.toggleWindow = new utils.ToggleableWindow("samv_client/toolbaricon");
+            this.toggleWindow = new utils.ToggleableWindow("samv_client/icon");
             this.WindowCaption = "samv";
             this.WindowBounds.width = 1;
             this.WindowBounds.height = 1;
