@@ -32,6 +32,7 @@ namespace StandAloneMapView.utils
         public virtual void Start(){}
         public virtual void Update(){}
         public virtual void OnDestroy(){}
+        public virtual void OnGUI(){}
 
         public string WindowCaption = string.Empty;
         public Rect WindowBounds;
@@ -47,7 +48,12 @@ namespace StandAloneMapView.utils
             if(this.WindowBounds.width == 0 || this.WindowBounds.height == 0)
                 this.WindowBounds = new Rect(50, 50, 250, 100);
 
-            this.WindowBounds = GUILayout.Window(this.WindowId, this.WindowBounds, DrawWindow, this.WindowCaption);
+            this.WindowBounds =  GUILayout.Window(this.WindowId,
+                                                 this.WindowBounds,
+                                                 DrawWindow,
+                                                 this.WindowCaption,
+                                                 GUILayout.ExpandWidth(true),
+                                                 GUILayout.ExpandHeight(true));
         }
 
         public virtual void DrawWindow(int id){}

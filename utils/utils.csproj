@@ -37,6 +37,7 @@
     <Compile Include="MonoBehaviourExtended.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="settings.cs" />
+    <Compile Include="toggleablewindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">

@@ -10,7 +10,7 @@ MOD_DIR = $(TEMP_DIR)/$(MOD_NAME)/
 all: release debug
 
 toolbaricon.png: toolbaricon.svg
-	inkscape --export-png=toolbaricon.png toolbaricon.svg -h 24 -w 24 -z
+	inkscape --export-png=toolbaricon.png toolbaricon.svg -w 32 -z
 
 release: toolbaricon.png
 	$(MDTOOL) build -t:Build -c:"Release" StandAloneMapView.sln

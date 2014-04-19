@@ -50,6 +50,8 @@ namespace StandAloneMapView.client
 
         public Settings Settings;
 
+        public utils.ToggleableWindow toggleWindow;
+
         public bool start = false;
         public bool firstLoadDone = false;
         public TextButton3D startButton;
@@ -68,8 +70,11 @@ namespace StandAloneMapView.client
             this.startButton.onPressed = new Callback(StartButtonPressed);
             Destroy(menu.startBtn);
 
-            this.WindowCaption = "Stand alone map view settings";
             this.ShowGUI = true;
+            this.toggleWindow = new utils.ToggleableWindow("samv_client/toolbaricon");
+            this.WindowCaption = "samv";
+            this.WindowBounds.width = 1;
+            this.WindowBounds.height = 1;
         }
 
         public void StartButtonPressed()
@@ -119,7 +124,43 @@ namespace StandAloneMapView.client
             this.startButton.GetComponent<TextMesh>().text = "Waiting for server sync...";
         }
 
+        public override void DrawGUI()
+        {
+            if(this.toggleWindow.WasToggled)
+            {
+                if(this.toggleWindow.IsOn)
+                {
+                    this.WindowCaption = "Stand alone map view settings";
+                    this.WindowBounds.width = 250;
+                    this.WindowBounds.height = 100;
+                }
+                else
+                {
+                    this.WindowCaption = "samv";
+                    this.WindowBounds.width = this.toggleWindow.CompactedWidth;
+                    this.WindowBounds.height = this.toggleWindow.CompactedHeight;
+                }
+            }
+
+            base.DrawGUI();
+        }
+
+        public override void OnGUI()
+        {
+            this.toggleWindow.OnGUI();
+        }
+
         public override void DrawWindow(int id)
+        {
+            this.toggleWindow.DrawWindow();
+
+            if(this.toggleWindow.IsOn)
+                DrawWindowContents();
+
+            GUI.DragWindow();
+        }
+
+        public void DrawWindowContents()
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label("server ip/hostname:");
@@ -149,8 +190,6 @@ namespace StandAloneMapView.client
                 this.Settings.Save();
                 this.Reset();
             }
-
-            GUI.DragWindow();
         }
 
         public static void LoadSave()
