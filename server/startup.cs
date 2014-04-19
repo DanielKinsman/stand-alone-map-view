@@ -19,9 +19,6 @@ along with Stand Alone Map View.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-
-
-
 using KSP;
 using System;
 using UnityEngine;

@@ -42,6 +42,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="tcpworker.cs" />
     <Compile Include="settings.cs" />
+    <Compile Include="asteroiddespawner.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\comms\comms.csproj">
