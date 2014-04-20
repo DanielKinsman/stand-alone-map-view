@@ -20,6 +20,7 @@ along with Stand Alone Map View.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using ProtoBuf;
+using System;
 using System.Collections.Generic;
 
 namespace StandAloneMapView.comms
@@ -105,6 +106,42 @@ namespace StandAloneMapView.comms
             this.Maneuvers = new Maneuver[maneuverList.Count];
             for(int i = 0; i < maneuverList.Count; i++)
                 this.Maneuvers[i] = new Maneuver(maneuverList[i]);
+        }
+
+
+        public void UpdateManeuverNodes(PatchedConicSolver solver)
+        {
+            if(solver == null)
+                throw new ArgumentNullException("solver");
+
+            // Avoid flickering by not overwriting nodes where possible
+
+            // update the common ones
+            int commonLength = Math.Min(solver.maneuverNodes.Count, this.Maneuvers.Length);
+            for(int i = 0; i < commonLength; i++)
+            {
+                var node = solver.maneuverNodes[i];
+                var nodeUpdate = this.Maneuvers[i];
+                node.UT = nodeUpdate.UniversalTime;
+                node.DeltaV = nodeUpdate.DeltaV;
+                node.OnGizmoUpdated(node.DeltaV, node.UT);
+            }
+
+            // remove any extra ones
+            for(int i = solver.maneuverNodes.Count; i > this.Maneuvers.Length; i--)
+            {
+                var node = solver.maneuverNodes[i-1];
+                solver.RemoveManeuverNode(node);
+            }
+
+            // add any new ones
+            for(int i = solver.maneuverNodes.Count; i < this.Maneuvers.Length; i++)
+            {
+                var maneuver = this.Maneuvers[i];
+                ManeuverNode node = solver.AddManeuverNode(maneuver.UniversalTime);
+                node.DeltaV = maneuver.DeltaV;
+                node.OnGizmoUpdated(node.DeltaV, node.UT);
+            }
         }
 
         public override bool Equals(object obj)

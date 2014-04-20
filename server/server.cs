@@ -161,18 +161,26 @@ namespace StandAloneMapView.server
             }
             this.lastUniversalTime = Planetarium.GetUniversalTime();
 
-            UpdateManeuverNodes();
+            this.UpdateManeuverNodes();
 
             try
             {
-                var packet = new comms.Packet();
-                packet.Time = new comms.Time(Planetarium.GetUniversalTime(), TimeWarp.CurrentRateIndex, TimeWarp.CurrentRate);
 
-                if(FlightGlobals.ActiveVessel != null)
-                    packet.Vessel = new comms.Vessel(FlightGlobals.ActiveVessel);
+                var packet = new comms.Packet();
+                packet.Time = new comms.Time(Planetarium.GetUniversalTime(),
+                                             TimeWarp.CurrentRateIndex, TimeWarp.CurrentRate);
+
+                var vessel = FlightGlobals.ActiveVessel;
+                if(vessel != null)
+                {
+                    packet.Vessel = new comms.Vessel(vessel);
+                    packet.ManeuverList = new comms.ManeuverList(
+                                                vessel.patchedConicSolver.maneuverNodes);
+                }
 
                 byte[] buffer = packet.Make();
-                this.socket.BeginSend(buffer, buffer.Length, this.clientEndPoint, SendCallback, this.socket);
+                this.socket.BeginSend(buffer, buffer.Length, this.clientEndPoint,
+                                      SendCallback, this.socket);
             }
             catch(System.IO.IOException e)
             {
@@ -185,7 +193,6 @@ namespace StandAloneMapView.server
             }
         }
 
-        protected object maneuverNodeLock = new object();
         public void UpdateManeuverNodes()
         {
             var update = this.socketWorker.ManeuverUpdate;
@@ -194,41 +201,11 @@ namespace StandAloneMapView.server
 
             this.socketWorker.ManeuverUpdate = null;
 
-            if(FlightGlobals.ActiveVessel == null)
+            var vessel = FlightGlobals.ActiveVessel;
+            if(vessel == null)
                 return;
 
-            var solver = FlightGlobals.ActiveVessel.patchedConicSolver;
-            lock(maneuverNodeLock)
-            {
-                // Avoid flickering by not overwriting nodes where possible
-
-                // update the common ones
-                int commonLength = Math.Min(solver.maneuverNodes.Count, update.Maneuvers.Length);
-                for(int i = 0; i < commonLength; i++)
-                {
-                    var node = solver.maneuverNodes[i];
-                    var nodeUpdate = update.Maneuvers[i];
-                    node.UT = nodeUpdate.UniversalTime;
-                    node.DeltaV = nodeUpdate.DeltaV;
-                    node.OnGizmoUpdated(node.DeltaV, node.UT);
-                }
-
-                // remove any extra ones
-                for(int i = solver.maneuverNodes.Count; i > update.Maneuvers.Length; i--)
-                {
-                    var node = solver.maneuverNodes[i-1];
-                    solver.RemoveManeuverNode(node);
-                }
-
-                // add any new ones
-                for(int i = solver.maneuverNodes.Count; i < update.Maneuvers.Length; i++)
-                {
-                    var maneuver = update.Maneuvers[i];
-                    ManeuverNode node = solver.AddManeuverNode(maneuver.UniversalTime);
-                    node.DeltaV = maneuver.DeltaV;
-                    node.OnGizmoUpdated(node.DeltaV, node.UT);
-                }
-            }
+            update.UpdateManeuverNodes(vessel.patchedConicSolver);
         }
 
         public void VesselChanged(Vessel vessel)

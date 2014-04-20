@@ -84,6 +84,7 @@ namespace StandAloneMapView.client
                     return;
                 }
 
+                this.UpdateManeuverNodes();
                 this.socketWorker.SendManeuverUpdates(vessel.patchedConicSolver.maneuverNodes);
 
                 // We can't release launch clamps, so delete them
@@ -133,6 +134,21 @@ namespace StandAloneMapView.client
                 LogException(e);
                 throw;
             }
+        }
+
+        public void UpdateManeuverNodes()
+        {
+            var update = this.socketWorker.ManeuverUpdate;
+            if(update == null)
+                return;
+
+            this.socketWorker.ManeuverUpdate = null;
+
+            var vessel = FlightGlobals.ActiveVessel;
+            if(vessel == null)
+                return;
+
+            update.UpdateManeuverNodes(vessel.patchedConicSolver);
         }
 
         public void ForceMapView()
