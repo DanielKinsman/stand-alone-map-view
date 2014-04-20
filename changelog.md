@@ -1,3 +1,9 @@
+v0.7
+
+* Maneuver node syncing (bidrectional) (#6)
+* False asteroids no longer get spawned (#3)
+* Settings windows start minimized so they are less obtrusive
+
 v0.5
 
 * IP/hostname and port settings so you can use a separte computer (#7)

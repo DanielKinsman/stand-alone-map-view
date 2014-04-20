@@ -5,10 +5,9 @@ A Kerbal Space Program mod that opens the map view in another window/monitor.
 It works by launching a separate instance of the game, and syncing the time
 and ship information via networking (udp/tcp).
 
-**Still very much a work in progress**.  
-Not very user friendly and no UI. Contains bugs, but luckily they don't
-happen in your main game window, just on the map view. When that happens you
-can keep playing and only have to restart the map view.
+Contains some bugs, but luckily they don't happen in your main game window,
+just on the map view. When that happens you can keep playing and only have
+to restart the map view.
 
 To get it working, you'll need two separate installs of KSP; your normal one
 and a separate one just for this mod. The "server" stuff goes in your normal
@@ -22,12 +21,12 @@ Current Features
 * Syncing of time and time warp
 * Syncing of active vessel's trajectory
 * Syncing of all vessels' orbits
+* Syncing of maneuver nodes (bidrectionally)
 
 Feature Wishlist
 ----------------
 
-* Syncing of manoeuver nodes (bidirectional)
-* [and many more][1]
+Check [the enhancement list on github][1]
 
 [1]: https://github.com/DanielKinsman/stand-alone-map-view/issues?labels=enhancement&page=1&state=open
 
