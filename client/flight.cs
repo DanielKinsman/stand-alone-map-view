@@ -84,6 +84,8 @@ namespace StandAloneMapView.client
                     return;
                 }
 
+                this.socketWorker.SendManeuverUpdates(vessel.patchedConicSolver.maneuverNodes);
+
                 // We can't release launch clamps, so delete them
                 if(vessel.situation == Vessel.Situations.PRELAUNCH)
                     DestroyLaunchClamps(vessel);

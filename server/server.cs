@@ -21,6 +21,7 @@ along with Stand Alone Map View.  If not, see <http://www.gnu.org/licenses/>.
 
 using KSP;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization;
@@ -43,6 +44,7 @@ namespace StandAloneMapView.server
         protected UdpClient socket;
 
         protected TcpWorker tcpWorker;
+        protected SocketWorker socketWorker;
 
         public Settings Settings;
 
@@ -50,6 +52,7 @@ namespace StandAloneMapView.server
         {
             this.LogPrefix = "samv server";
             this.tcpWorker = new TcpWorker();
+            this.socketWorker = new SocketWorker();
         }
 
         public override void Awake()
@@ -76,6 +79,7 @@ namespace StandAloneMapView.server
             this.SetupUdpClient();
             this.SubscribeToEvents();
             this.tcpWorker.Start();
+            this.socketWorker.Start(this.socket, this.clientEndPoint);
         }
 
         public void SetupUdpClient()
@@ -112,6 +116,7 @@ namespace StandAloneMapView.server
             this.socket.Close();
             UnsubscribeFromEvents();
             this.tcpWorker.Stop();
+            this.socketWorker.Stop();
         }
 
         public override void Update()
@@ -156,6 +161,8 @@ namespace StandAloneMapView.server
             }
             this.lastUniversalTime = Planetarium.GetUniversalTime();
 
+            UpdateManeuverNodes();
+
             try
             {
                 var packet = new comms.Packet();
@@ -175,6 +182,52 @@ namespace StandAloneMapView.server
             {
                 LogException(e);
                 throw;
+            }
+        }
+
+        protected object maneuverNodeLock = new object();
+        public void UpdateManeuverNodes()
+        {
+            var update = this.socketWorker.ManeuverUpdate;
+            if(update == null)
+                return;
+
+            this.socketWorker.ManeuverUpdate = null;
+
+            if(FlightGlobals.ActiveVessel == null)
+                return;
+
+            var solver = FlightGlobals.ActiveVessel.patchedConicSolver;
+            lock(maneuverNodeLock)
+            {
+                // Avoid flickering by not overwriting nodes where possible
+
+                // update the common ones
+                int commonLength = Math.Min(solver.maneuverNodes.Count, update.Maneuvers.Length);
+                for(int i = 0; i < commonLength; i++)
+                {
+                    var node = solver.maneuverNodes[i];
+                    var nodeUpdate = update.Maneuvers[i];
+                    node.UT = nodeUpdate.UniversalTime;
+                    node.DeltaV = nodeUpdate.DeltaV;
+                    node.OnGizmoUpdated(node.DeltaV, node.UT);
+                }
+
+                // remove any extra ones
+                for(int i = solver.maneuverNodes.Count; i > update.Maneuvers.Length; i--)
+                {
+                    var node = solver.maneuverNodes[i-1];
+                    solver.RemoveManeuverNode(node);
+                }
+
+                // add any new ones
+                for(int i = solver.maneuverNodes.Count; i < update.Maneuvers.Length; i++)
+                {
+                    var maneuver = update.Maneuvers[i];
+                    ManeuverNode node = solver.AddManeuverNode(maneuver.UniversalTime);
+                    node.DeltaV = maneuver.DeltaV;
+                    node.OnGizmoUpdated(node.DeltaV, node.UT);
+                }
             }
         }
 

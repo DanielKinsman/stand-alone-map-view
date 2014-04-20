@@ -28,13 +28,14 @@ namespace StandAloneMapView.comms
     [ProtoContract]
     public class Packet
     {
-        public const float updateInterval = 0.05f;
-
         [ProtoMember(1)]
         public Time Time { get; set; }
 
         [ProtoMember(2)]
         public Vessel Vessel { get; set; }
+
+        [ProtoMember(3)]
+        public ManeuverList ManeuverList { get; set; }
 
         public byte[] Make()
         {

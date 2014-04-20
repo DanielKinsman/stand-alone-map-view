@@ -55,5 +55,6 @@
     <Compile Include="orbit.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="save.cs" />
+    <Compile Include="maneuver.cs" />
   </ItemGroup>
 </Project>

@@ -53,6 +53,7 @@
       <HintPath>..\lib\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="server.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="tcpworker.cs" />
     <Compile Include="settings.cs" />
+    <Compile Include="socketworker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\icon.png">

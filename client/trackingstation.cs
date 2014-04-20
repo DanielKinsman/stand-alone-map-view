@@ -40,7 +40,7 @@ namespace StandAloneMapView.client
         {
             // Invoke the worker on a 2 second delay to let things "settle in"
             // Seems unstable if you don't.
-            this.InvokeRepeating("UnityWorker", 2.0f, comms.Packet.updateInterval);
+            this.InvokeRepeating("UnityWorker", 2.0f, 0.05f);
             this.socketWorker.Start();
         }
 

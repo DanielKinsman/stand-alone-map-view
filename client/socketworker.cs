@@ -20,6 +20,7 @@ along with Stand Alone Map View.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -30,6 +31,7 @@ namespace StandAloneMapView.client
     {
         protected UdpClient socket;
         public IPEndPoint clientEndPoint { get; set; }
+        public IPEndPoint serverEndPoint = null;
         private bool runThread;
 
         // Thread safety is probably not too much of a concern
@@ -77,10 +79,32 @@ namespace StandAloneMapView.client
             }
         }
 
+        protected comms.ManeuverList cachedManeuvers;
+        private readonly object _maneuverUpdateLock = new object();
+        private comms.ManeuverList _maneuverUpdate = null;
+        public comms.ManeuverList ManeuverUpdate
+        {
+            get
+            {
+                lock(_maneuverUpdateLock)
+                {
+                    return _maneuverUpdate;
+                }
+            }
+            set
+            {
+                lock(_maneuverUpdateLock)
+                {
+                    this._maneuverUpdate = value;
+                }
+            }
+        }
+
         public void Start()
         {
             this.Stop();
             var settings = Settings.Load();
+            this.serverEndPoint = new IPEndPoint(IPAddress.Any, 0);
             this.clientEndPoint = new IPEndPoint(IPAddress.Loopback, settings.RecievePort);
             this.socket = new UdpClient(this.clientEndPoint);
             this.runThread = true;
@@ -100,25 +124,44 @@ namespace StandAloneMapView.client
             {
                 try
                 {
-                    var serverEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                    comms.Packet packet = comms.Packet.Read(this.socket.Receive(ref serverEndPoint));
+                    comms.Packet packet = comms.Packet.Read(this.socket.Receive(ref this.serverEndPoint));
 
                     if(packet.Time != null)
                         this.TimeUpdate = packet.Time;
 
                     this.VesselUpdate = packet.Vessel;
+
+                    var maneuverUpdate = packet.ManeuverList;
+                    // If they haven't changed, don't process as an update
+                    if(maneuverUpdate != null && maneuverUpdate.Equals(this.cachedManeuvers))
+                        continue;
+
+                    // They've changed on the other end, update locally
+                    this.cachedManeuvers = maneuverUpdate;
+                    this.ManeuverUpdate = maneuverUpdate;
                 }
-                catch(System.IO.IOException)
+                catch(Exception e)
                 {
                     //todo log
-                    System.Threading.Thread.Sleep(100);
-                }
-                catch(Exception)
-                {
-                    //todo log
-                    throw;
+                    if(!(e is System.IO.IOException || e is SocketException))
+                        throw;
                 }
             }
+        }
+
+        public void SendManeuverUpdates(IList<ManeuverNode> maneuvers)
+        {
+            if(this.serverEndPoint == null)
+                throw new InvalidOperationException("The server hasn't contacted us yet!");
+
+            var buffer = comms.Packet.Make<comms.ManeuverList>(new comms.ManeuverList(maneuvers));
+            this.socket.BeginSend(buffer, buffer.Length, this.serverEndPoint, SendCallback, this.socket);
+        }
+
+        public static void SendCallback(IAsyncResult result)
+        {
+            var client = (UdpClient)result.AsyncState;
+            client.EndSend(result);
         }
     }
 }
