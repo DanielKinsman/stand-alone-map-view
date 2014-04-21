@@ -116,8 +116,10 @@ namespace StandAloneMapView.comms
 
             // Avoid flickering by not overwriting nodes where possible
 
+            var maneuversLength = this.Maneuvers == null ? 0 : this.Maneuvers.Length;
+            int commonLength = Math.Min(solver.maneuverNodes.Count, maneuversLength);
+
             // update the common ones
-            int commonLength = Math.Min(solver.maneuverNodes.Count, this.Maneuvers.Length);
             for(int i = 0; i < commonLength; i++)
             {
                 var node = solver.maneuverNodes[i];
@@ -128,14 +130,14 @@ namespace StandAloneMapView.comms
             }
 
             // remove any extra ones
-            for(int i = solver.maneuverNodes.Count; i > this.Maneuvers.Length; i--)
+            for(int i = solver.maneuverNodes.Count; i > maneuversLength; i--)
             {
                 var node = solver.maneuverNodes[i-1];
                 solver.RemoveManeuverNode(node);
             }
 
             // add any new ones
-            for(int i = solver.maneuverNodes.Count; i < this.Maneuvers.Length; i++)
+            for(int i = solver.maneuverNodes.Count; i < maneuversLength; i++)
             {
                 var maneuver = this.Maneuvers[i];
                 ManeuverNode node = solver.AddManeuverNode(maneuver.UniversalTime);
