@@ -1,3 +1,7 @@
+v0.9
+
+
+
 v0.7
 
 * Maneuver node syncing (bidrectional) (#6)
