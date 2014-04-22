@@ -40,7 +40,7 @@ release.zip: release
 	cp -rv client/bin/Release/ $(MOD_DIR)samv_client
 	cp -rv server/bin/Release/ $(MOD_DIR)samv_server
 	cp -v license $(MOD_DIR)
-	cp -v readme.md $(MOD_DIR)
+	cp -v readme.md $(MOD_DIR)/readme.txt
 	cp -v lib/protobuf-net_licence $(MOD_DIR)
 	pushd $(TEMP_DIR); zip -r release.zip $(MOD_NAME); popd
 	mv -v $(TEMP_DIR)/release.zip ./release.zip
