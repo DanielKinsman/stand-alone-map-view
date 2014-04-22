@@ -19,8 +19,9 @@ along with Stand Alone Map View.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-using System;
 using ProtoBuf;
+using System;
+using System.Linq;
 
 namespace StandAloneMapView.comms
 {
@@ -55,6 +56,51 @@ namespace StandAloneMapView.comms
                 return;
 
             this.VesselId = vessel.id;
+        }
+
+        public void UpdateTarget()
+        {
+            ITargetable target = null;
+            if(this.CelestialBodyName != null)
+            {
+                target = FlightGlobals.Bodies.FirstOrDefault(
+                                        b => b.name == this.CelestialBodyName);
+            }
+            else if(this.VesselId != Guid.Empty)
+            {
+                target = FlightGlobals.Vessels.FirstOrDefault(
+                                                v => v.id == this.VesselId);
+            }
+
+            if(FlightGlobals.fetch.VesselTarget != target)
+                FlightGlobals.fetch.SetVesselTarget(target);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if(obj == null)
+                return false;
+
+            return this.Equals(obj as Target);
+        }
+
+        public bool Equals(Target target)
+        {
+            if(target == null)
+                return false;
+
+            return this.CelestialBodyName == target.CelestialBodyName &&
+                            this.VesselId == target.VesselId;
+        }
+
+        public override int GetHashCode()
+        {
+            // the magic numbers in here are primes
+            int hash = 3271;
+            if(this.CelestialBodyName != null)
+                hash = (hash * 1327) + this.CelestialBodyName.GetHashCode();
+            hash = (hash * 1327) + this.VesselId.GetHashCode();
+            return hash;
         }
     }
 }

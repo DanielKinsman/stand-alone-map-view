@@ -100,6 +100,27 @@ namespace StandAloneMapView.client
             }
         }
 
+        protected comms.Target cachedTarget;
+        private readonly object _targetUpdateLock = new object();
+        private comms.Target _targetUpdate = null;
+        public comms.Target TargetUpdate
+        {
+            get
+            {
+                lock(_targetUpdateLock)
+                {
+                    return _targetUpdate;
+                }
+            }
+            set
+            {
+                lock(_targetUpdateLock)
+                {
+                    this._targetUpdate = value;
+                }
+            }
+        }
+
         public void Start()
         {
             this.Stop();
@@ -130,6 +151,13 @@ namespace StandAloneMapView.client
                         this.TimeUpdate = packet.Time;
 
                     this.VesselUpdate = packet.Vessel;
+
+                    // If target hasn't changed, don't process as an update
+                    if(packet.Target == null || !packet.Target.Equals(this.cachedTarget))
+                    {
+                        this.cachedTarget = packet.Target;
+                        this.TargetUpdate = packet.Target;
+                    }
 
                     var maneuverUpdate = packet.ManeuverList;
                     // If they haven't changed, don't process as an update

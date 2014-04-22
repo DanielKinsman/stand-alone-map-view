@@ -206,21 +206,7 @@ namespace StandAloneMapView.server
                 return;
 
             this.socketWorker.TargetUpdate = null;
-
-            ITargetable target = null;
-            if(update.CelestialBodyName != null)
-            {
-                target = FlightGlobals.Bodies.FirstOrDefault(
-                                        b => b.name == update.CelestialBodyName);
-            }
-            else if(update.VesselId != Guid.Empty)
-            {
-                target = FlightGlobals.Vessels.FirstOrDefault(
-                                                v => v.id == update.VesselId);
-            }
-
-            if(FlightGlobals.fetch.VesselTarget != target)
-                FlightGlobals.fetch.SetVesselTarget(target);
+            update.UpdateTarget();
         }
 
         public void UpdateManeuverNodes()

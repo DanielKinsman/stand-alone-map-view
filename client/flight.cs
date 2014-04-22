@@ -85,6 +85,7 @@ namespace StandAloneMapView.client
                 }
 
                 this.UpdateManeuverNodes();
+                this.UpdateTarget();
                 this.socketWorker.Send(vessel.patchedConicSolver.maneuverNodes,
                                        vessel.targetObject);
 
@@ -135,6 +136,16 @@ namespace StandAloneMapView.client
                 LogException(e);
                 throw;
             }
+        }
+
+        public void UpdateTarget()
+        {
+            var update = this.socketWorker.TargetUpdate;
+            if(update == null)
+                return;
+
+            this.socketWorker.TargetUpdate = null;
+            update.UpdateTarget();
         }
 
         public void UpdateManeuverNodes()
