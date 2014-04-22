@@ -58,6 +58,27 @@ namespace StandAloneMapView.server
             }
         }
 
+        protected comms.Target cachedTarget;
+        private readonly object _targetUpdateLock = new object();
+        private comms.Target _targetUpdate = null;
+        public comms.Target TargetUpdate
+        {
+            get
+            {
+                lock(_targetUpdateLock)
+                {
+                    return _targetUpdate;
+                }
+            }
+            set
+            {
+                lock(_targetUpdateLock)
+                {
+                    this._targetUpdate = value;
+                }
+            }
+        }
+
         public void Start(UdpClient socket, IPEndPoint clientEndPoint)
         {
             this.Stop();
@@ -79,15 +100,23 @@ namespace StandAloneMapView.server
                 try
                 {
                     var buffer = this.socket.Receive(ref this.clientEndPoint);
-                    var update = comms.Packet.Read<comms.ManeuverList>(buffer);
+                    var update = comms.ClientPacket.Read(buffer);
 
-                    // If they haven't changed, don't process as an update
-                    if(update != null && update.Equals(this.cachedManeuvers))
+                    // If target hasn't changed, don't process as an update
+                    if(update.Target == null || !update.Target.Equals(this.cachedTarget))
+                    {
+                        this.cachedTarget = update.Target;
+                        this.TargetUpdate = update.Target;
+                    }
+
+                    // If maneuvers haven't changed, don't process as an update
+                    var maneuverUpdate = update.ManeuverList;
+                    if(maneuverUpdate != null && maneuverUpdate.Equals(this.cachedManeuvers))
                         continue;
 
                     // They've changed on the other end, update locally
-                    this.cachedManeuvers = update;
-                    this.ManeuverUpdate = update;
+                    this.cachedManeuvers = maneuverUpdate;
+                    this.ManeuverUpdate = maneuverUpdate;
                 }
                 catch(System.IO.IOException)
                 {

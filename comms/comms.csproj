@@ -56,5 +56,6 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="save.cs" />
     <Compile Include="maneuver.cs" />
+    <Compile Include="target.cs" />
   </ItemGroup>
 </Project>

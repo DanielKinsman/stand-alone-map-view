@@ -161,7 +161,7 @@ namespace StandAloneMapView.server
             }
             this.lastUniversalTime = Planetarium.GetUniversalTime();
 
-            this.UpdateManeuverNodes();
+            this.UpdateFromClient();
 
             try
             {
@@ -175,6 +175,7 @@ namespace StandAloneMapView.server
                     packet.Vessel = new comms.Vessel(vessel);
                     packet.ManeuverList = new comms.ManeuverList(
                                                 vessel.patchedConicSolver.maneuverNodes);
+                    packet.Target = new comms.Target(vessel.targetObject);
                 }
 
                 byte[] buffer = packet.Make();
@@ -190,6 +191,36 @@ namespace StandAloneMapView.server
                 LogException(e);
                 throw;
             }
+        }
+
+        public void UpdateFromClient()
+        {
+            this.UpdateTarget();
+            this.UpdateManeuverNodes();
+        }
+
+        public void UpdateTarget()
+        {
+            var update = this.socketWorker.TargetUpdate;
+            if(update == null)
+                return;
+
+            this.socketWorker.TargetUpdate = null;
+
+            ITargetable target = null;
+            if(update.CelestialBodyName != null)
+            {
+                target = FlightGlobals.Bodies.FirstOrDefault(
+                                        b => b.name == update.CelestialBodyName);
+            }
+            else if(update.VesselId != Guid.Empty)
+            {
+                target = FlightGlobals.Vessels.FirstOrDefault(
+                                                v => v.id == update.VesselId);
+            }
+
+            if(FlightGlobals.fetch.VesselTarget != target)
+                FlightGlobals.fetch.SetVesselTarget(target);
         }
 
         public void UpdateManeuverNodes()

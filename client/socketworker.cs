@@ -149,12 +149,16 @@ namespace StandAloneMapView.client
             }
         }
 
-        public void SendManeuverUpdates(IList<ManeuverNode> maneuvers)
+        public void Send(IList<ManeuverNode> maneuvers, ITargetable target)
         {
             if(this.serverEndPoint == null)
                 throw new InvalidOperationException("The server hasn't contacted us yet!");
 
-            var buffer = comms.Packet.Make<comms.ManeuverList>(new comms.ManeuverList(maneuvers));
+            var packet = new comms.ClientPacket();
+            packet.ManeuverList = new comms.ManeuverList(maneuvers);
+            packet.Target = new comms.Target(target);
+
+            var buffer = packet.Make();
             this.socket.BeginSend(buffer, buffer.Length, this.serverEndPoint, SendCallback, this.socket);
         }
 

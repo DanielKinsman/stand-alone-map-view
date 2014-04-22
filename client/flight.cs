@@ -85,7 +85,8 @@ namespace StandAloneMapView.client
                 }
 
                 this.UpdateManeuverNodes();
-                this.socketWorker.SendManeuverUpdates(vessel.patchedConicSolver.maneuverNodes);
+                this.socketWorker.Send(vessel.patchedConicSolver.maneuverNodes,
+                                       vessel.targetObject);
 
                 // We can't release launch clamps, so delete them
                 if(vessel.situation == Vessel.Situations.PRELAUNCH)

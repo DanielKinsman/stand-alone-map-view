@@ -37,6 +37,9 @@ namespace StandAloneMapView.comms
         [ProtoMember(3)]
         public ManeuverList ManeuverList { get; set; }
 
+        [ProtoMember(4)]
+        public Target Target { get; set; }
+
         public byte[] Make()
         {
             return Make<Packet>(this);
@@ -62,6 +65,26 @@ namespace StandAloneMapView.comms
             {
                 return Serializer.Deserialize<T>(stream);
             }
+        }
+    }
+
+    [ProtoContract]
+    public class ClientPacket
+    {
+        [ProtoMember(1)]
+        public ManeuverList ManeuverList { get; set; }
+
+        [ProtoMember(2)]
+        public Target Target;
+
+        public byte[] Make()
+        {
+            return Packet.Make<ClientPacket>(this);
+        }
+
+        public static ClientPacket Read(byte[] buffer)
+        {
+            return Packet.Read<ClientPacket>(buffer);
         }
     }
 }
