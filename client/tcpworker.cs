@@ -93,6 +93,13 @@ namespace StandAloneMapView.client
                         while(this.runWorker && this.Client.Connected)
                         {
                             var stream = this.Client.GetStream();
+                            var messageType = (comms.TcpMessage)stream.ReadByte();
+                            if(messageType == comms.TcpMessage.ConnectionTest)
+                                continue;
+
+                            if(messageType != comms.TcpMessage.SaveUpdate)
+                                throw new IOException("Unknown message type {0}", (byte)messageType);
+
                             comms.Save.ReadAndSave(stream, this.savePath, this.SaveFileLock);
                             this.AtLeastOneSaveReceived.Set();
                             this.SaveReceived.Set();

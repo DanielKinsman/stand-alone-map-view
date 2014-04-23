@@ -57,5 +57,6 @@
     <Compile Include="save.cs" />
     <Compile Include="maneuver.cs" />
     <Compile Include="target.cs" />
+    <Compile Include="tcpmessage.cs" />
   </ItemGroup>
 </Project>

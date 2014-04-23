@@ -86,17 +86,32 @@ namespace StandAloneMapView.server
                         client.SendTimeout = 1000;
                         stream.WriteTimeout = 1000;
 
+                        bool firstSendDone = false;
                         while(this.runWorker && client.Connected)
                         {
                             var saveToSend = this.Save;
                             this.Save = null;
+
+                            if(!firstSendDone && saveToSend == null &&
+                               HighLogic.CurrentGame != null)
+                            {
+                                // For newly connected clients, force a sync
+                                saveToSend = comms.Save.FromCurrentGame();
+                            }
+
                             if(saveToSend == null)
                             {
+                                // If you never send anything, the client always
+                                // reports that it is still connected, even when
+                                // it isn't.
+                                stream.WriteByte((byte)comms.TcpMessage.ConnectionTest);
                                 Thread.Sleep(500);
                                 continue;
                             }
 
+                            stream.WriteByte((byte)comms.TcpMessage.SaveUpdate);
                             saveToSend.Send(stream);
+                            firstSendDone = true;
                         }
                     }
                 }
