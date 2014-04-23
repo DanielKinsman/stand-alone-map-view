@@ -194,12 +194,23 @@ namespace StandAloneMapView.client
 
         public static void LoadSave()
         {
+            LoadSave(false);
+        }
+
+        public static void LoadSave(bool startFlight)
+        {
             HighLogic.SaveFolder = SAVEDIRECTORY;
 
             Game game;
             lock(TcpWorker.Instance.SaveFileLock)
             {
                 game = GamePersistence.LoadGame(SAVEFILE, HighLogic.SaveFolder, true, false);
+            }
+
+            if(startFlight)
+            {
+                FlightDriver.StartAndFocusVessel(game, 0);
+                return;
             }
 
             game.startScene = GameScenes.TRACKSTATION;

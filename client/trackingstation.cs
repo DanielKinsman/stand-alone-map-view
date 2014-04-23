@@ -29,6 +29,7 @@ namespace StandAloneMapView.client
     public class TrackingStation : utils.MonoBehaviourExtended
     {
         public SocketWorker socketWorker;
+        public bool LoadRequired = false;
 
         public TrackingStation()
         {
@@ -42,6 +43,7 @@ namespace StandAloneMapView.client
             // Seems unstable if you don't.
             this.InvokeRepeating("UnityWorker", 2.0f, 0.05f);
             this.socketWorker.Start();
+
         }
 
         public override void OnDestroy()
@@ -59,19 +61,34 @@ namespace StandAloneMapView.client
             {
                 if(TcpWorker.Instance.SaveReceived.WaitOne(0))
                 {
-                    LogDebug("New save received from server, reloading.");
+                    LogDebug("New save received from server.");
                     TcpWorker.Instance.SaveReceived.Reset();
-                    Startup.LoadSave();
+                    this.LoadRequired = true;
                 }
 
                 Flight.UpdateTime(this.socketWorker.TimeUpdate);
-                UpdateVessel(this, this.socketWorker.VesselUpdate);
+                this.UpdateVessel();
             }
             catch(Exception e)
             {
                 LogException(e);
                 throw;
             }
+        }
+
+        public void UpdateVessel()
+        {
+            if(this.socketWorker.VesselUpdate == null)
+                return;
+
+            if(this.LoadRequired)
+            {
+                Startup.LoadSave(true);
+                this.LoadRequired = false;
+                return;
+            }
+
+            TrackingStation.UpdateVessel(this, this.socketWorker.VesselUpdate);
         }
 
         public static void UpdateVessel(utils.MonoBehaviourExtended logger, comms.Vessel vesselUpdate)
@@ -91,7 +108,7 @@ namespace StandAloneMapView.client
             }
 
             logger.Log("Vessel {0} not found, reloading save (vessel id {1})", vesselUpdate.Name, vesselUpdate.Id);
-            Startup.LoadSave();
+            Startup.LoadSave(true);
         }
     }
 }

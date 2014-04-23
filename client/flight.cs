@@ -79,6 +79,17 @@ namespace StandAloneMapView.client
 
                 if(vesselUpdate.Id != vessel.id)
                 {
+                    // This might look odd, but it aint my fault.
+                    // If you try and switch loaded scenes too quickly,
+                    // data structures in squad's code don't get populated
+                    // and it's exception city.
+                    if(vessel.patchedConicRenderer == null ||
+                       vessel.patchedConicRenderer.solver == null ||
+                       vessel.patchedConicRenderer.solver.maneuverNodes == null)
+                    {
+                        return;
+                    }
+
                     // Vessel switched, tracking station code handles that
                     TrackingStation.UpdateVessel(this, vesselUpdate);
                     return;

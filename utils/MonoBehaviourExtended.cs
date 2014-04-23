@@ -103,7 +103,7 @@ namespace StandAloneMapView.utils
 
         public void LogException(Exception e)
         {
-            LogWarning("exception incoming, trace {0}", e.StackTrace);
+            LogWarning("exception incoming, trace {0}", e.StackTrace.Replace("\n", " \\n "));
             UnityEngine.Debug.LogException(e);
         }
     }
