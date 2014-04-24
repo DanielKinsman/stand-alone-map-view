@@ -100,52 +100,57 @@ namespace StandAloneMapView.client
                 this.socketWorker.Send(vessel.patchedConicSolver.maneuverNodes,
                                        vessel.targetObject);
 
-                // We can't release launch clamps, so delete them
-                if(vessel.situation == Vessel.Situations.PRELAUNCH)
-                    DestroyLaunchClamps(vessel);
-
-                // Vessels near the ground have a habit of exploding, so force them "on rails"
-                const float OFF_RAILS_HEIGHT = 300.0f;
-                var height = Math.Min(vessel.GetHeightFromTerrain(), (float)vessel.altitude);
-
-                // Careful, GetHeightFromTerrain() returns -1 in high orbit
-                if(height > 0.0f && height < OFF_RAILS_HEIGHT)
-                {
-                    // Unfortunately GetHeightFromTerrain() doesn't get updated when on rails, so
-                    // we can't use it check when we should go back off rails. Instead we cheat and
-                    // send it across the wire.
-                    if(vesselUpdate.Height > 0.0f && vesselUpdate.Height < OFF_RAILS_HEIGHT)
-                    {
-                        // We're close the the ground, prevent impact
-                        vessel.GoOnRails();
-                        return;
-                    }
-
-                    // We're now at a safe altitude
-                    vessel.GoOffRails();
-
-                    // Sometimes the vessel can get stuck in the landed state,
-                    // most often when starting a new launch first thing after
-                    // starting the game. See issue #17.
-                    vessel.checkLanded();
-                }
-
-                if(vessel.orbitDriver.updateMode == OrbitDriver.UpdateMode.UPDATE)
-                {
-                    // Finally update the vessel's orbit from the network data
-                    var orbit = vesselUpdate.Orbit.GetKspOrbit(FlightGlobals.Bodies);
-                    vessel.orbit.UpdateFromOrbitAtUT(orbit, Planetarium.GetUniversalTime(), orbit.referenceBody);
-                }
-                else if(vessel.orbitDriver.updateMode == OrbitDriver.UpdateMode.TRACK_Phys)
-                {
-                    // We don't want physics to be calculated
-                    vessel.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
-                }
+                this.UpdateVessel(vessel, vesselUpdate);
             }
             catch(Exception e)
             {
                 LogException(e);
                 throw;
+            }
+        }
+
+        public void UpdateVessel(Vessel vessel, comms.Vessel vesselUpdate)
+        {
+            // We can't release launch clamps, so delete them
+            if(vessel.situation == Vessel.Situations.PRELAUNCH)
+                DestroyLaunchClamps(vessel);
+
+            // Vessels near the ground have a habit of exploding, so force them "on rails"
+            const float OFF_RAILS_HEIGHT = 300.0f;
+            var height = Math.Min(vessel.GetHeightFromTerrain(), (float)vessel.altitude);
+
+            // Careful, GetHeightFromTerrain() returns -1 in high orbit
+            if(height > 0.0f && height < OFF_RAILS_HEIGHT)
+            {
+                // Unfortunately GetHeightFromTerrain() doesn't get updated when on rails, so
+                // we can't use it check when we should go back off rails. Instead we cheat and
+                // send it across the wire.
+                if(vesselUpdate.Height > 0.0f && vesselUpdate.Height < OFF_RAILS_HEIGHT)
+                {
+                    // We're close the the ground, prevent impact
+                    vessel.GoOnRails();
+                    return;
+                }
+
+                // We're now at a safe altitude
+                vessel.GoOffRails();
+
+                // Sometimes the vessel can get stuck in the landed state,
+                // most often when starting a new launch first thing after
+                // starting the game. See issue #17.
+                vessel.checkLanded();
+            }
+
+            if(vessel.orbitDriver.updateMode == OrbitDriver.UpdateMode.UPDATE)
+            {
+                // Finally update the vessel's orbit from the network data
+                var orbit = vesselUpdate.Orbit.GetKspOrbit(FlightGlobals.Bodies);
+                vessel.orbit.UpdateFromOrbitAtUT(orbit, Planetarium.GetUniversalTime(), orbit.referenceBody);
+            }
+            else if(vessel.orbitDriver.updateMode == OrbitDriver.UpdateMode.TRACK_Phys)
+            {
+                // We don't want physics to be calculated
+                vessel.orbitDriver.updateMode = OrbitDriver.UpdateMode.UPDATE;
             }
         }
 
