@@ -1,6 +1,9 @@
 v0.9
 
-
+* Current target syncing (#12)
+* Fixed a bug where the first save sync never happens (#24)
+* Less "jumpyness" and reloading when client is sitting in the tracking station (#24)
+* Fixed exceptions in the debug log (#23)
 
 v0.7
 
