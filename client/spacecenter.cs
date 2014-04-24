@@ -30,6 +30,14 @@ namespace StandAloneMapView.client
         {
             // Player has quit tracking station.
             // Go back to main menu.
+            // But do it on a delay, as KSP craps itself if you do it
+            // instantly (specifically you'll see tons of
+            // NullReferenceExceptions in the log)
+            this.Invoke("GoToMainMenu", 0.1f);
+        }
+
+        public void GoToMainMenu()
+        {
             HighLogic.LoadScene(GameScenes.MAINMENU);
         }
     }

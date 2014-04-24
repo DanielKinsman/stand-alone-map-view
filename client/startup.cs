@@ -63,12 +63,15 @@ namespace StandAloneMapView.client
 
         public override void Awake()
         {
+            // Replacing the menu is very hacky, as simply overriding the
+            // onPressed callback of existing buttons doesn't work.
             var menu = FindObjectOfType<MainMenu>();
             menu.startBtn.GetComponent<TextMesh>().text = "";
             this.startButton = (TextButton3D)TextButton3D.Instantiate(menu.startBtn);
             this.startButton.GetComponent<TextMesh>().text = "Waiting for server sync...";
             this.startButton.onPressed = new Callback(StartButtonPressed);
-            Destroy(menu.startBtn);
+            Destroy(menu.startBtn); // Causes a NullReferenceException on quit,
+                                    // nothing I can do about it.
 
             this.ShowGUI = true;
             this.toggleWindow = new utils.ToggleableWindow("samv_client/icon");

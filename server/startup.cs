@@ -48,7 +48,7 @@ namespace StandAloneMapView.server
         public override void Start()
         {
             this.Settings = Settings.Load();
-#if DEBUG
+#if DEBUG_START_SERVER
             // Automatically load default save for quicker testing
             HighLogic.SaveFolder = "default";
             var game = GamePersistence.LoadGame("persistent",
