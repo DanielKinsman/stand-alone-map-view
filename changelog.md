@@ -1,3 +1,7 @@
+v0.11
+
+* Fixed a bug preventing use on LAN (#27)
+
 v0.9
 
 * Current target syncing (#12)
