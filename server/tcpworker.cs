@@ -59,7 +59,7 @@ namespace StandAloneMapView.server
         {
             this.Stop();
             Settings settings = Settings.Load();
-            this.listenerEndPoint = new IPEndPoint(IPAddress.Loopback, settings.ListenPort);
+            this.listenerEndPoint = new IPEndPoint(IPAddress.Any, settings.ListenPort);
             this.listener = new TcpListener(this.listenerEndPoint);
             this.runWorker = true;
             new Thread(Worker).Start();

@@ -126,7 +126,7 @@ namespace StandAloneMapView.client
             this.Stop();
             var settings = Settings.Load();
             this.serverEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            this.clientEndPoint = new IPEndPoint(IPAddress.Loopback, settings.RecievePort);
+            this.clientEndPoint = new IPEndPoint(IPAddress.Any, settings.RecievePort);
             this.socket = new UdpClient(this.clientEndPoint);
             this.runThread = true;
             new Thread(Worker).Start();
