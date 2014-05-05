@@ -111,6 +111,13 @@ namespace StandAloneMapView.client
 
         public void UpdateVessel(Vessel vessel, comms.Vessel vesselUpdate)
         {
+            // Check for vessel rename / type change
+            if(vessel.vesselName != vesselUpdate.Name)
+                vessel.vesselName = vesselUpdate.Name;
+
+            if(vessel.vesselType != (VesselType)vesselUpdate.VesselType)
+                vessel.vesselType = (VesselType)vesselUpdate.VesselType;
+
             // We can't release launch clamps, so delete them
             if(vessel.situation == Vessel.Situations.PRELAUNCH)
                 DestroyLaunchClamps(vessel);

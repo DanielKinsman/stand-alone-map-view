@@ -40,6 +40,9 @@ namespace StandAloneMapView.comms
         [ProtoMember(4)]
         public float Height;
 
+        [ProtoMember(5)]
+        public byte VesselType;
+
         public Vessel()
         {
         }
@@ -50,6 +53,7 @@ namespace StandAloneMapView.comms
             this.Name = kspVessel.vesselName;
             this.Orbit = new Orbit(kspVessel.orbit);
             this.Height = Math.Min(kspVessel.GetHeightFromTerrain(), (float)kspVessel.altitude);
+            this.VesselType = (byte)kspVessel.vesselType; // will break if there are ever >256 vessel types
         }
     }
 }
