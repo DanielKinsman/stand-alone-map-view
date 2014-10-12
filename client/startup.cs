@@ -69,7 +69,8 @@ namespace StandAloneMapView.client
             menu.startBtn.GetComponent<TextMesh>().text = "";
             this.startButton = (TextButton3D)TextButton3D.Instantiate(menu.startBtn);
             this.startButton.GetComponent<TextMesh>().text = "Waiting for server sync...";
-            this.startButton.onPressed = new Callback(StartButtonPressed);
+            this.startButton.onReleased += new Callback(StartButtonReleased);
+
             Destroy(menu.startBtn); // Causes a NullReferenceException on quit,
                                     // nothing I can do about it.
 
@@ -80,7 +81,12 @@ namespace StandAloneMapView.client
             this.WindowBounds.height = 1;
         }
 
-        public void StartButtonPressed()
+        public override void OnDestroy()
+        {
+            this.startButton.onReleased -= new Callback(StartButtonReleased);
+        }
+
+        public void StartButtonReleased()
         {
             this.start = true;
         }
