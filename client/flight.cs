@@ -34,6 +34,8 @@ namespace StandAloneMapView.client
     {
         public SocketWorker socketWorker;
 
+        public const string CONTROL_LOCK = "";
+
         public Flight()
         {
             this.LogPrefix = "samv client";
@@ -54,6 +56,9 @@ namespace StandAloneMapView.client
                 this.socketWorker.Stop();
                 this.socketWorker = null;
             }
+
+            // Remove control locks
+            InputLockManager.RemoveControlLock(CONTROL_LOCK);
         }
 
         public override void Update()
@@ -189,11 +194,10 @@ namespace StandAloneMapView.client
         public void ForceMapView()
         {
             MapView.EnterMapView();
-            var blocks = ControlTypes.ACTIONS_SHIP | ControlTypes.ALL_SHIP_CONTROLS |
-                    ControlTypes.GROUPS_ALL | ControlTypes.LINEAR | ControlTypes.QUICKLOAD | ControlTypes.QUICKSAVE |
+            var locks = ControlTypes.ACTIONS_SHIP | ControlTypes.ALL_SHIP_CONTROLS |
+                ControlTypes.GROUPS_ALL | ControlTypes.LINEAR | ControlTypes.QUICKLOAD | ControlTypes.QUICKSAVE |
                     ControlTypes.TIMEWARP | ControlTypes.VESSEL_SWITCHING;
-
-            InputLockManager.SetControlLock(blocks, "stand-alone-map-view");
+            InputLockManager.SetControlLock(locks, CONTROL_LOCK);
         }
 
         public static void UpdateTime(comms.Time timeUpdate)
