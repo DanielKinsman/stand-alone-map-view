@@ -1,6 +1,11 @@
 v0.13
 
-
+* Updated for KSP 0.25
+* Fixed a bug stopping main menu from working on client (#33)
+* Fixed a bug with the auto start setting not being honoured (#31)
+* Fixed a bug preventing focus switching in map view (#30)
+* More logging to help diagnose connection issues (#29)
+* Vessel renaming synced (#13)
 
 v0.11
 
