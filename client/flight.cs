@@ -189,9 +189,10 @@ namespace StandAloneMapView.client
         public void ForceMapView()
         {
             MapView.EnterMapView();
-            var blocks = ControlTypes.MAP | ControlTypes.ACTIONS_SHIP | ControlTypes.ALL_SHIP_CONTROLS |
+            var blocks = ControlTypes.ACTIONS_SHIP | ControlTypes.ALL_SHIP_CONTROLS |
                     ControlTypes.GROUPS_ALL | ControlTypes.LINEAR | ControlTypes.QUICKLOAD | ControlTypes.QUICKSAVE |
-                        ControlTypes.TIMEWARP | ControlTypes.VESSEL_SWITCHING;
+                    ControlTypes.TIMEWARP | ControlTypes.VESSEL_SWITCHING;
+
             InputLockManager.SetControlLock(blocks, "stand-alone-map-view");
         }
 
