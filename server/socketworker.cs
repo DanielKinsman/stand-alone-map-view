@@ -23,6 +23,7 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using StandAloneMapView.utils;
 
 namespace StandAloneMapView.server
 {
@@ -31,6 +32,8 @@ namespace StandAloneMapView.server
         protected UdpClient socket;
         public IPEndPoint clientEndPoint;
         private bool runThread;
+
+        public ThreadSafeQueue<string> logMessages { get; private set; }
 
         // Thread safety is probably not too much of a concern
         // given we are only "writing" from the worker thread
@@ -79,6 +82,11 @@ namespace StandAloneMapView.server
             }
         }
 
+        public SocketWorker()
+        {
+            this.logMessages = new ThreadSafeQueue<string>();
+        }
+
         public void Start(UdpClient socket, IPEndPoint clientEndPoint)
         {
             this.Stop();
@@ -95,11 +103,21 @@ namespace StandAloneMapView.server
 
         public void Worker()
         {
+            Log("Waiting to recieve UDP messages");
+            bool gotFirst = false;
             while(this.runThread)
             {
                 try
                 {
                     var buffer = this.socket.Receive(ref this.clientEndPoint);
+
+                    if(!gotFirst)
+                    {
+                        Log("Received first UDP message from {0}:{1}",
+                                          this.clientEndPoint.Address.ToString(), this.clientEndPoint.Port);
+                        gotFirst = true;
+                    }
+
                     var update = comms.ClientPacket.Read(buffer);
 
                     // If target hasn't changed, don't process as an update
@@ -118,20 +136,20 @@ namespace StandAloneMapView.server
                     this.cachedManeuvers = maneuverUpdate;
                     this.ManeuverUpdate = maneuverUpdate;
                 }
-                catch(System.IO.IOException)
-                {
-                    //todo log
-
-                }
                 catch(Exception e)
                 {
-                    //todo log
+                    Log("SocketWorker exception: {0} {1}", e.Message, e.StackTrace);
                     if(e is SocketException || e is System.IO.IOException)
                         System.Threading.Thread.Sleep(100);
                     else
                         throw;
                 }
             }
+        }
+
+        public void Log(string message, params object[] formatParams)
+        {
+            this.logMessages.Push(string.Format(message, formatParams));
         }
     }
 }

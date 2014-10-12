@@ -70,6 +70,10 @@ namespace StandAloneMapView.client
         {
             try
             {
+                var message = this.socketWorker.logMessages.TryPop(null);
+                if(message != null)
+                    this.Log(message);
+
                 UpdateTime(this.socketWorker.TimeUpdate);
 
                 var vesselUpdate = this.socketWorker.VesselUpdate;

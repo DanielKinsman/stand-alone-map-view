@@ -135,6 +135,10 @@ namespace StandAloneMapView.server
                 Destroy(this.gameObject);
             }
 
+            var message = this.socketWorker.logMessages.TryPop(null);
+            if(message != null)
+                this.Log(message);
+
             // No need for thread safety, bool is atomic
             if(this.saveSyncRequired)
             {

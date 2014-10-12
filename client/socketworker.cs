@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using StandAloneMapView.utils;
 
 namespace StandAloneMapView.client
 {
@@ -33,6 +34,8 @@ namespace StandAloneMapView.client
         public IPEndPoint clientEndPoint { get; set; }
         public IPEndPoint serverEndPoint = null;
         private bool runThread;
+
+        public ThreadSafeQueue<string> logMessages { get; private set; }
 
         // Thread safety is probably not too much of a concern
         // given we are only "writing" from the worker thread
@@ -121,6 +124,11 @@ namespace StandAloneMapView.client
             }
         }
 
+        public SocketWorker()
+        {
+            this.logMessages = new ThreadSafeQueue<string>();
+        }
+
         public void Start()
         {
             this.Stop();
@@ -141,11 +149,20 @@ namespace StandAloneMapView.client
 
         public void Worker()
         {
+            Log("Waiting to recieve UDP messages on port {0}", this.clientEndPoint.Port);
+            bool gotFirst = false;
             while(this.runThread)
             {
                 try
                 {
                     comms.Packet packet = comms.Packet.Read(this.socket.Receive(ref this.serverEndPoint));
+
+                    if(!gotFirst)
+                    {
+                        Log("Received first UDP message from {0}:{1}",
+                            this.serverEndPoint.Address.ToString(), this.serverEndPoint.Port);
+                        gotFirst = true;
+                    }
 
                     if(packet.Time != null)
                         this.TimeUpdate = packet.Time;
@@ -170,7 +187,7 @@ namespace StandAloneMapView.client
                 }
                 catch(Exception e)
                 {
-                    //todo log
+                    Log("SocketWorker exception: {0} {1}", e.Message, e.StackTrace);
                     if(!(e is System.IO.IOException || e is SocketException))
                         throw;
                 }
@@ -188,6 +205,11 @@ namespace StandAloneMapView.client
 
             var buffer = packet.Make();
             this.socket.BeginSend(buffer, buffer.Length, this.serverEndPoint, SendCallback, this.socket);
+        }
+
+        public void Log(string message, params object[] formatParams)
+        {
+            this.logMessages.Push(string.Format(message, formatParams));
         }
 
         public static void SendCallback(IAsyncResult result)

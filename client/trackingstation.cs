@@ -59,6 +59,10 @@ namespace StandAloneMapView.client
         {
             try
             {
+                var message = this.socketWorker.logMessages.TryPop(null);
+                if(message != null)
+                    this.Log(message);
+
                 if(TcpWorker.Instance.SaveReceived.WaitOne(0))
                 {
                     LogDebug("New save received from server.");
