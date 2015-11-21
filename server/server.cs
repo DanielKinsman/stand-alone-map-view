@@ -139,6 +139,10 @@ namespace StandAloneMapView.server
             if(message != null)
                 this.Log(message);
 
+            message = this.tcpWorker.logMessages.TryPop(null);
+            if(message != null)
+                this.Log(message);
+
             // No need for thread safety, bool is atomic
             if(this.saveSyncRequired)
             {

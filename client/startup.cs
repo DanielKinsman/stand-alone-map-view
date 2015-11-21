@@ -111,6 +111,10 @@ namespace StandAloneMapView.client
 
         public override void Update()
         {
+            var message = TcpWorker.Instance.logMessages.TryPop(null);
+            if(message != null)
+                Log(message);
+
             if(this.firstLoadDone)
                 this.startButton.GetComponent<TextMesh>().text = "Start map view";
 
