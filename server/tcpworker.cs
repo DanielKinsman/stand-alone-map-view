@@ -24,6 +24,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using StandAloneMapView.utils;
 
 namespace StandAloneMapView.server
 {
@@ -33,6 +34,8 @@ namespace StandAloneMapView.server
         protected TcpListener listener;
 
         protected bool runWorker = true;
+
+        public ThreadSafeQueue<string> logMessages { get; private set; }
 
         protected object saveLock = new object();
         protected comms.Save _save;
@@ -52,7 +55,7 @@ namespace StandAloneMapView.server
 
         public TcpWorker()
         {
-
+            this.logMessages = new ThreadSafeQueue<string>();
         }
 
         public void Start()
@@ -79,9 +82,11 @@ namespace StandAloneMapView.server
                 try
                 {
                     this.listener.Start();
+                    this.Log("tcp listening");
                     using(var client = this.listener.AcceptTcpClient())
                     {
                         this.listener.Stop();
+                        this.Log("tcp connected");
                         var stream = client.GetStream();
                         client.SendTimeout = 1000;
                         stream.WriteTimeout = 1000;
@@ -124,6 +129,11 @@ namespace StandAloneMapView.server
 
                 Thread.Sleep(500);
             }
+        }
+
+        public void Log(string message, params object[] formatParams)
+        {
+            this.logMessages.Push(string.Format(message, formatParams));
         }
     }
 }

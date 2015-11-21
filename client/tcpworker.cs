@@ -24,6 +24,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using StandAloneMapView.utils;
 
 namespace StandAloneMapView.client
 {
@@ -38,6 +39,8 @@ namespace StandAloneMapView.client
 
         protected object _saveFileLock = new object();
         public object SaveFileLock { get { return _saveFileLock; } }
+
+        public ThreadSafeQueue<string> logMessages { get; private set; }
 
         protected static volatile TcpWorker instance = null;
         public static TcpWorker Instance
@@ -56,6 +59,7 @@ namespace StandAloneMapView.client
             this.savePath = savePath;
             this.SaveReceived = new ManualResetEvent(false);
             this.AtLeastOneSaveReceived = new ManualResetEvent(false);
+            this.logMessages = new ThreadSafeQueue<string>();
         }
 
         public void Start()
@@ -88,7 +92,9 @@ namespace StandAloneMapView.client
                 {
                     using(this.Client = new TcpClient())
                     {
+                        Log("tcp client connecting...");
                         this.Client.Connect(this.serverEndPoint);
+                        Log("tcp client connected");
                     
                         while(this.runWorker && this.Client.Connected)
                         {
@@ -100,6 +106,7 @@ namespace StandAloneMapView.client
                             if(messageType != comms.TcpMessage.SaveUpdate)
                                 throw new IOException("Unknown message type {0}", (byte)messageType);
 
+                            Log("tcp client save game received");
                             comms.Save.ReadAndSave(stream, this.savePath, this.SaveFileLock);
                             this.AtLeastOneSaveReceived.Set();
                             this.SaveReceived.Set();
@@ -110,13 +117,18 @@ namespace StandAloneMapView.client
                 }
                 catch(Exception e)
                 {
-                    // todo log
+                    Log("tcp worker error {0}", e);
                     if(!(e is System.IO.IOException || e is SocketException))
                         throw;
                 }
 
                 Thread.Sleep(500);
             }
+        }
+
+        public void Log(string message, params object[] formatParams)
+        {
+            this.logMessages.Push(string.Format(message, formatParams));
         }
     }
 }
