@@ -1,3 +1,8 @@
+v0.15
+
+* Updated for KSP 1.0.5
+* More logging for tcp connection issues
+
 v0.13
 
 * Updated for KSP 0.25

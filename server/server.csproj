@@ -10,7 +10,7 @@
     <RootNamespace>server</RootNamespace>
     <AssemblyName>server</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <ReleaseVersion>0.13</ReleaseVersion>
+    <ReleaseVersion>0.15</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
