@@ -43,7 +43,7 @@ namespace StandAloneMapView.comms
             }
         }
 
-        public ConfigNode Node;
+        public byte[] saveContent;
 
         public Save()
         {
@@ -58,24 +58,24 @@ namespace StandAloneMapView.comms
             // apart from GamePersistnce.SaveGame() will actully update
             // the current flight state (e.g. when going on eva) immediately.
             GamePersistence.SaveGame(SAVEFILE, HighLogic.SaveFolder, SaveMode.OVERWRITE);
-            var node = ConfigNode.Load(SavePath);
-
-            return new Save() {Node = node};
+            return new Save() {saveContent=File.ReadAllBytes(SavePath)};
+            // perhaps read as text instead to avoid line endings and other platform problems?
         }
 
         public void Send(Stream stream)
         {
             var formatter = new BinaryFormatter();
-            formatter.Serialize(stream, this.Node);
+            formatter.Serialize(stream, this.saveContent);
         }
 
         public static void ReadAndSave(Stream stream, string file, object fileLock)
         {
             var formatter = new BinaryFormatter();
-            var node = (ConfigNode)formatter.Deserialize(stream);
+            var saveContent = (byte[])formatter.Deserialize(stream);
+
             lock(fileLock)
             {
-                node.Save(file);
+                File.WriteAllBytes(file, saveContent);
             }
         }
     }
