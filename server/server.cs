@@ -246,7 +246,7 @@ namespace StandAloneMapView.server
 
         public void VesselCreated(Vessel vessel)
         {
-            LogDebug ("Vessel created ({0}, {1}), spending save sync.", vessel.name, vessel.id);
+            LogDebug ("Vessel created ({0}, {1}), pending save sync.", vessel.name, vessel.id);
             this.saveSyncRequired = true;
         }
 
