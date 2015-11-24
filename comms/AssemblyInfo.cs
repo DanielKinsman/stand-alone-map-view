@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("stand alone map view")]
-[assembly: AssemblyCopyright("2014 Daniel Kinsman")]
+[assembly: AssemblyCopyright("2014-2015 Daniel Kinsman")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
