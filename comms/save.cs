@@ -27,6 +27,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace StandAloneMapView.comms
 {
+    [Serializable]
     public class Save
     {
         public const string SAVEFILE = "samv_sync";

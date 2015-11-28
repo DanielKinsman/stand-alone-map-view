@@ -24,6 +24,7 @@ namespace StandAloneMapView.comms
     public enum TcpMessage : byte
     {
         ConnectionTest = 0xE7,
-        SaveUpdate = 0x3A
+        SaveUpdate = 0x3A,
+        VesselList = 0x92
     };
 }

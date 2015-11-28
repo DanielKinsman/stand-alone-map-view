@@ -47,10 +47,13 @@ namespace StandAloneMapView.client
             MapView.OnExitMapView += () => ForceMapView();
             this.Invoke("ForceMapView", 0.25f); // Call it directly in Start() and it doesn't work.
             this.socketWorker.Start();
+            this.InvokeRepeating("CheckVessels", 15.0f, 5.0f);
         }
 
         public override void OnDestroy()
         {
+            this.CancelInvoke("CheckVessels");
+
             if(this.socketWorker != null)
             {
                 this.socketWorker.Stop();
@@ -193,6 +196,29 @@ namespace StandAloneMapView.client
                 return;
 
             update.UpdateManeuverNodes(vessel.patchedConicSolver);
+        }
+
+        public void CheckVessels()
+        {
+            try
+            {
+                var vesselList = TcpWorker.Instance.Vessels;
+                if(vesselList == null)
+                    return;
+
+                var serverVessels = vesselList.Vessels;
+                var vesselsToKill = FlightGlobals.Vessels.Where(v => !serverVessels.ContainsKey(v.id)).ToList();
+                foreach(var v in vesselsToKill)
+                {
+                    LogDebug("Vessel {0} ({1}) does not exist on server, killing it", v.name, v.id);
+                    v.Die();
+                }
+            }
+            catch(Exception e)
+            {
+                LogException(e);
+                throw;
+            }
         }
 
         public void ForceMapView()

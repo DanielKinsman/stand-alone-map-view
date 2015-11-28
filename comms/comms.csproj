@@ -59,5 +59,6 @@
     <Compile Include="maneuver.cs" />
     <Compile Include="target.cs" />
     <Compile Include="tcpmessage.cs" />
+    <Compile Include="vesssellist.cs" />
   </ItemGroup>
 </Project>
