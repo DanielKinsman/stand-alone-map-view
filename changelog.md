@@ -1,3 +1,7 @@
+v0.17
+
+* When vessels get destroyed, the client can remove them without reloading (#15)
+
 v0.15
 
 * Updated for KSP 1.0.5
