@@ -42,6 +42,22 @@ namespace StandAloneMapView.client
 
         public ThreadSafeQueue<string> logMessages { get; private set; }
 
+        protected object _vesselsLock = new object();
+        protected comms.VesselList _vessels;
+        public comms.VesselList Vessels
+        {
+            get
+            {
+                lock(_vesselsLock)
+                    return this._vessels;
+            }
+            private set
+            {
+                lock(_vesselsLock)
+                    this._vessels = value;
+            }
+        }
+
         protected static volatile TcpWorker instance = null;
         public static TcpWorker Instance
         {
@@ -100,16 +116,26 @@ namespace StandAloneMapView.client
                         {
                             var stream = this.Client.GetStream();
                             var messageType = (comms.TcpMessage)stream.ReadByte();
-                            if(messageType == comms.TcpMessage.ConnectionTest)
-                                continue;
 
-                            if(messageType != comms.TcpMessage.SaveUpdate)
-                                throw new IOException("Unknown message type {0}", (byte)messageType);
+                            switch(messageType)
+                            {
+                                case comms.TcpMessage.ConnectionTest:
+                                    break;
 
-                            Log("tcp client save game received");
-                            comms.Save.ReadAndSave(stream, this.savePath, this.SaveFileLock);
-                            this.AtLeastOneSaveReceived.Set();
-                            this.SaveReceived.Set();
+                                case StandAloneMapView.comms.TcpMessage.SaveUpdate:
+                                    Log("tcp client save game received");
+                                    comms.Save.ReadAndSave(stream, this.savePath, this.SaveFileLock);
+                                    this.AtLeastOneSaveReceived.Set();
+                                    this.SaveReceived.Set();
+                                    break;
+
+                                case comms.TcpMessage.VesselList:
+                                    this.Vessels = comms.VesselList.FromStream(stream);
+                                    break;
+
+                                default:
+                                    throw new IOException("Unknown message type {0}", (byte)messageType);
+                            }
                         }
 
                         this.Client.Close();

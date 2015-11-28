@@ -53,6 +53,42 @@ namespace StandAloneMapView.server
             }
         }
 
+        protected comms.Save GetAndNullSave()
+        {
+            lock(this.saveLock)
+            {
+                var save = this.Save;
+                this.Save = null;
+                return save;
+            }
+        }
+
+        protected object vesselListLock = new object();
+        protected comms.VesselList _vessels;
+        public comms.VesselList Vessels
+        {
+            get
+            {
+                lock(vesselListLock)
+                    return _vessels;
+            }
+            set
+            {
+                lock(vesselListLock)
+                    this._vessels = value;
+            }
+        }
+
+        protected comms.VesselList GetAndNullVessels()
+        {
+            lock(this.vesselListLock)
+            {
+                var vessels = this.Vessels;
+                this.Vessels = null;
+                return vessels;
+            }
+        }
+
         public TcpWorker()
         {
             this.logMessages = new ThreadSafeQueue<string>();
@@ -94,8 +130,7 @@ namespace StandAloneMapView.server
                         bool firstSendDone = false;
                         while(this.runWorker && client.Connected)
                         {
-                            var saveToSend = this.Save;
-                            this.Save = null;
+                            var saveToSend = this.GetAndNullSave();
 
                             if(!firstSendDone && saveToSend == null &&
                                HighLogic.CurrentGame != null)
@@ -104,7 +139,9 @@ namespace StandAloneMapView.server
                                 saveToSend = comms.Save.FromCurrentGame();
                             }
 
-                            if(saveToSend == null)
+                            var vesselsToSend = this.GetAndNullVessels();
+
+                            if(saveToSend == null && vesselsToSend == null)
                             {
                                 // If you never send anything, the client always
                                 // reports that it is still connected, even when
@@ -114,9 +151,18 @@ namespace StandAloneMapView.server
                                 continue;
                             }
 
-                            stream.WriteByte((byte)comms.TcpMessage.SaveUpdate);
-                            saveToSend.Send(stream);
-                            firstSendDone = true;
+                            if(saveToSend != null)
+                            {
+                                stream.WriteByte((byte)comms.TcpMessage.SaveUpdate);
+                                saveToSend.Send(stream);
+                                firstSendDone = true;
+                            }
+
+                            if(vesselsToSend != null)
+                            {
+                                stream.WriteByte((byte)comms.TcpMessage.VesselList);
+                                vesselsToSend.Send(stream);
+                            }
                         }
                     }
                 }

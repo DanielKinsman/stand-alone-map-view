@@ -38,6 +38,7 @@ namespace StandAloneMapView.server
         private static volatile Server instance = null;
 
         protected bool saveSyncRequired = true;
+        protected bool vesselListUpdateRequired = false;
         public double lastUniversalTime = 0.0;
 
         public IPEndPoint clientEndPoint { get; set; }
@@ -152,6 +153,14 @@ namespace StandAloneMapView.server
                 if(!this.IsInvoking("SaveSyncFile"))
                     this.Invoke("SaveSyncFile", 2.0f);
                 this.saveSyncRequired = false;
+                this.vesselListUpdateRequired = true;
+            }
+
+            if(this.vesselListUpdateRequired)
+            {
+                if(!this.IsInvoking("SendVesselListUpdate"))
+                    this.Invoke("SendVesselListUpdate", 2.0f);
+                this.vesselListUpdateRequired = false;
             }
 
             // Don't send time or flight data when in the VAB, astronaut complex etc.
@@ -240,13 +249,12 @@ namespace StandAloneMapView.server
 
         public void VesselDestroyed(Vessel vessel)
         {
-            LogDebug ("Vessel destroyed ({0}, {1}), pending save sync.", vessel.name, vessel.id);
-            this.saveSyncRequired = true;
+            this.vesselListUpdateRequired = true;
         }
 
         public void VesselCreated(Vessel vessel)
         {
-            LogDebug ("Vessel created ({0}, {1}), spending save sync.", vessel.name, vessel.id);
+            LogDebug ("Vessel created ({0}, {1}), pending save sync.", vessel.name, vessel.id);
             this.saveSyncRequired = true;
         }
 
@@ -256,6 +264,15 @@ namespace StandAloneMapView.server
                 return;
 
             this.tcpWorker.Save = comms.Save.FromCurrentGame();
+        }
+
+        public void SendVesselListUpdate()
+        {
+            var vessels = comms.VesselList.FromCurrentGame();
+            if(vessels.Vessels.Count == 0)
+                return;
+
+            this.tcpWorker.Vessels = vessels;
         }
 
         public static void SendCallback(IAsyncResult result)
