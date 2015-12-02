@@ -1,0 +1,119 @@
+pid = 1251cd2de6534435874440f0050d585c
+name = dummy
+type = Debris
+sit = PRELAUNCH
+landed = True
+landedAt = KSC_LaunchPad_Platform
+splashed = False
+met = 0
+lct = 3994.25685424597
+lastUT = 3994.25685424597
+root = 0
+lat = -0.0972077899828593
+lon = -74.5576770433344
+alt = 72.6070354451658
+hgt = 0.0600207
+nrm = -0.0001871288,0.9999999,2.33294E-05
+rot = -0.7009881,-0.09228224,-0.09733193,0.7004471
+CoM = 0,0,0
+stg = 1
+prst = False
+ref = 4193820164
+ctrl = False
+cPch = 0.2
+cHdg = 0.3
+cMod = 0
+ORBIT
+{
+	SMA = 300818.65474876
+	ECC = 0.994798519149074
+	INC = 0.0972077888498288
+	LPE = 89.9999999999902
+	LAN = 172.169843185283
+	MNA = 3.14159265358979
+	EPH = 3994.25685424597
+	REF = 1
+}
+PART
+{
+	name = strutCube
+	cid = 4294737564
+	uid = 4193820164
+	mid = 1734555793
+	launchID = 8
+	parent = 0
+	position = 0,0,0
+	rotation = 0,0,0,1
+	mirror = 1,1,1
+	symMethod = Radial
+	istg = 0
+	dstg = 0
+	sqor = -1
+	sepI = 0
+	sidx = -1
+	attm = 0
+	srfN = srfAttach, -1
+	attN = top, -1
+	attN = bottom, -1
+	mass = 0.001
+	temp = 312.872506988362
+	tempExt = 312.891722493608
+	tempExtUnexp = 312.89169935857
+	expt = 0.5
+	state = 0
+	connected = True
+	attached = True
+	flag = Squad/Flags/default
+	rTrf = strutCube (dummy)
+	modCost = 0
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+ACTIONGROUPS
+{
+	Stage = False, 0
+	Gear = True, 0
+	Light = False, 0
+	RCS = False, 0
+	SAS = False, 0
+	Brakes = False, 0
+	Abort = False, 0
+	Custom01 = False, 0
+	Custom02 = False, 0
+	Custom03 = False, 0
+	Custom04 = False, 0
+	Custom05 = False, 0
+	Custom06 = False, 0
+	Custom07 = False, 0
+	Custom08 = False, 0
+	Custom09 = False, 0
+	Custom10 = False, 0
+}
+DISCOVERY
+{
+	state = -1
+	lastObservedTime = 0
+	lifetime = Infinity
+	refTime = Infinity
+	size = 2
+}
+FLIGHTPLAN
+{
+}
+CTRLSTATE
+{
+	pitch = 0
+	yaw = 0
+	roll = 0
+	trimPitch = 0
+	trimYaw = 0
+	trimRoll = 0
+	mainThrottle = 0
+}
