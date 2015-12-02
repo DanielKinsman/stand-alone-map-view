@@ -95,16 +95,16 @@ namespace StandAloneMapView.server
         {
             GameEvents.onVesselChange.Add(VesselChanged);
             GameEvents.onVesselDestroy.Add(VesselDestroyed);
-            GameEvents.onNewVesselCreated.Add(VesselCreated);
-
-            // todo check that docking triggers sync
+            GameEvents.onVesselCreate.Add(VesselCreated);
+            GameEvents.onVesselRename.Add(VesselRenamed);
         }
 
         public void UnsubscribeFromEvents()
         {
             GameEvents.onVesselChange.Remove(VesselChanged);
             GameEvents.onVesselDestroy.Remove(VesselDestroyed);
-            GameEvents.onNewVesselCreated.Remove(VesselCreated);
+            GameEvents.onVesselCreate.Remove(VesselCreated);
+            GameEvents.onVesselRename.Remove(VesselRenamed);
         }
 
         public override void OnDestroy()
@@ -256,6 +256,12 @@ namespace StandAloneMapView.server
         {
             LogDebug ("Vessel created ({0}, {1}), pending save sync.", vessel.name, vessel.id);
             this.saveSyncRequired = true;
+        }
+
+        public void VesselRenamed(GameEvents.HostedFromToAction<Vessel, string> shit)
+        {
+            LogDebug("Vessel renamed ({0}, {1}) {2}.", shit.host.id, shit.from, shit.to);
+            this.vesselListUpdateRequired = true;
         }
 
         public void SaveSyncFile()
