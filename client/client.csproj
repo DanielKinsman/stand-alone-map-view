@@ -43,6 +43,7 @@
     <Compile Include="tcpworker.cs" />
     <Compile Include="settings.cs" />
     <Compile Include="asteroiddespawner.cs" />
+    <Compile Include="vesselchecker.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\comms\comms.csproj">
