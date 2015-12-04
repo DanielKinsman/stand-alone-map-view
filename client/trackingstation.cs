@@ -30,11 +30,13 @@ namespace StandAloneMapView.client
     {
         public SocketWorker socketWorker;
         public bool LoadRequired = false;
+        public VesselChecker VesselChecker;
 
         public TrackingStation()
         {
             this.LogPrefix = "samv client";
             this.socketWorker = new SocketWorker();
+            this.VesselChecker = new VesselChecker(this);
         }
 
         public override void Awake()
@@ -43,11 +45,12 @@ namespace StandAloneMapView.client
             // Seems unstable if you don't.
             this.InvokeRepeating("UnityWorker", 2.0f, 0.05f);
             this.socketWorker.Start();
-
+            this.InvokeRepeating("CheckVessels", 15.0f, 5.0f);
         }
 
         public override void OnDestroy()
         {
+            this.CancelInvoke("CheckVessels");
             if(this.socketWorker != null)
             {
                 this.socketWorker.Stop();
@@ -78,6 +81,11 @@ namespace StandAloneMapView.client
                 LogException(e);
                 throw;
             }
+        }
+
+        public void CheckVessels()
+        {
+            this.VesselChecker.Check();
         }
 
         public void UpdateVessel()
