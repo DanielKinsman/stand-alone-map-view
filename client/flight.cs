@@ -132,10 +132,6 @@ namespace StandAloneMapView.client
             if(vessel.vesselType != (VesselType)vesselUpdate.VesselType)
                 vessel.vesselType = (VesselType)vesselUpdate.VesselType;
 
-            // We can't release launch clamps, so delete them
-            if(vessel.situation == Vessel.Situations.PRELAUNCH)
-                DestroyLaunchClamps(vessel);
-
             // Vessels near the ground have a habit of exploding, so force them "on rails"
             const float OFF_RAILS_HEIGHT = 300.0f;
             var height = Math.Min(vessel.GetHeightFromTerrain(), (float)vessel.altitude);
@@ -234,17 +230,6 @@ namespace StandAloneMapView.client
 
             if(TimeWarp.CurrentRateIndex != timeUpdate.TimeWarpRateIndex)
                 TimeWarp.SetRate(timeUpdate.TimeWarpRateIndex, false);
-        }
-
-        public static void DestroyLaunchClamps(Vessel vessel)
-        {
-            // thanks go to hyper edit
-            if(vessel == null || vessel.parts == null)
-                return;
-
-            var clamps = vessel.parts.Where(p => p.Modules != null && p.Modules.OfType<LaunchClamp>().Any()).ToList();
-            foreach(var clamp in clamps)
-                clamp.Die();
         }
     }
 }
