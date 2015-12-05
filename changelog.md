@@ -1,3 +1,10 @@
+v0.19
+
+* No parts required on client apart from cubic strut, can save ram by deleting them (#20)
+* New vessels (from disintegrating ships, undocking) appear without having to reload map view
+* Vessels tracked across surface correctly (#16)
+* Vessel crashes on the map view recovered from automatically (#32)
+
 v0.17
 
 * When vessels get destroyed, the client can remove them without reloading (#15)
