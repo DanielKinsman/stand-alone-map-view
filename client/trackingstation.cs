@@ -86,7 +86,7 @@ namespace StandAloneMapView.client
             if(vesselUpdate == null)
                 return;
 
-
+            CheckVessels();
             TrackingStation.UpdateVessel(this, vesselUpdate);
         }
 
