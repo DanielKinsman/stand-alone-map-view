@@ -23,28 +23,25 @@ using KSP;
 using System;
 using System.IO;
 using UnityEngine;
+using System.Reflection;
 
 namespace StandAloneMapView.client
 {
     [KSPAddon(KSPAddon.Startup.MainMenu, false)]
     public class Startup : utils.MonoBehaviourExtended
     {
-        public const string SAVEFILE = "persistent";
-        public const string SAVEFILENAME = "persistent.sfs";
+        public const string SAVEFILE = "base_save";
         public const string SAVEDIRECTORY = "stand_alone_map_viewer_dont_touch";
 
-        public static string SavePath
+        public static string KspSaveDirectory
         {
             get
             {
                 // KSP is naughty and stores savegames in the application directory.
-                var path = Path.Combine(
-                                Path.Combine(KSPUtil.ApplicationRootPath, "saves"),
-                                SAVEDIRECTORY);
-
-                Directory.CreateDirectory(path); //safe if already exists
-
-                return Path.Combine(path, SAVEFILENAME);
+                var saveDir = Path.Combine(
+                    Path.Combine(KSPUtil.ApplicationRootPath, "saves"), Startup.SAVEDIRECTORY);
+                Directory.CreateDirectory(saveDir); //safe if already exists
+                return saveDir;
             }
         }
 
@@ -79,6 +76,8 @@ namespace StandAloneMapView.client
             this.WindowCaption = "samv";
             this.WindowBounds.width = 1;
             this.WindowBounds.height = 1;
+
+            Startup.CopyBaseSave();
         }
 
         public override void OnDestroy()
@@ -118,13 +117,20 @@ namespace StandAloneMapView.client
             if(this.firstLoadDone)
                 this.startButton.GetComponent<TextMesh>().text = "Start map view";
 
-            if(TcpWorker.Instance.AtLeastOneSaveReceived.WaitOne(0))
+            if(TcpWorker.Instance.FirstVesselUpdateReceived.WaitOne(0))
                 this.firstLoadDone = true;
 
             if(this.firstLoadDone && this.start)
             {
                 this.start = false;
-                LoadSave();
+                try
+                {
+                    LoadSave();
+                }
+                catch(Exception e)
+                {
+                    LogException(e);
+                }
             }
         }
 
@@ -212,13 +218,7 @@ namespace StandAloneMapView.client
 
         public static void LoadSave(bool startFlight)
         {
-            HighLogic.SaveFolder = SAVEDIRECTORY;
-
-            Game game;
-            lock(TcpWorker.Instance.SaveFileLock)
-            {
-                game = GamePersistence.LoadGame(SAVEFILE, HighLogic.SaveFolder, true, false);
-            }
+            var game = GamePersistence.LoadGame(Startup.SAVEFILE, Startup.SAVEDIRECTORY, true, false);
 
             if(startFlight)
             {
@@ -228,6 +228,15 @@ namespace StandAloneMapView.client
 
             game.startScene = GameScenes.TRACKSTATION;
             game.Start();
+        }
+
+        public static void CopyBaseSave()
+        {
+            var saveFile = Path.Combine(Startup.KspSaveDirectory, Startup.SAVEFILE + ".sfs");
+            var sourceSaveFile = Path.Combine(
+                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), Startup.SAVEFILE + ".sfs");
+
+            File.Copy(sourceSaveFile, saveFile, true);
         }
     }
 }

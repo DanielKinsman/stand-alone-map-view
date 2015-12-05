@@ -33,7 +33,7 @@ namespace StandAloneMapView.client
             // But do it on a delay, as KSP craps itself if you do it
             // instantly (specifically you'll see tons of
             // NullReferenceExceptions in the log)
-            this.Invoke("GoToMainMenu", 0.1f);
+            this.Invoke("GoToMainMenu", 1.1f);
         }
 
         public void GoToMainMenu()

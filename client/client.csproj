@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F35F09E1-F754-4333-9066-FFE8A34AE980}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -42,7 +42,6 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="tcpworker.cs" />
     <Compile Include="settings.cs" />
-    <Compile Include="asteroiddespawner.cs" />
     <Compile Include="vesselchecker.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +74,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="dummy.protovessel">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="base_save.sfs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

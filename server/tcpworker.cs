@@ -37,32 +37,6 @@ namespace StandAloneMapView.server
 
         public ThreadSafeQueue<string> logMessages { get; private set; }
 
-        protected object saveLock = new object();
-        protected comms.Save _save;
-        public comms.Save Save
-        {
-            get
-            {
-                lock(saveLock)
-                    return _save;
-            }
-            set
-            {
-                lock(saveLock)
-                    this._save = value;
-            }
-        }
-
-        protected comms.Save GetAndNullSave()
-        {
-            lock(this.saveLock)
-            {
-                var save = this.Save;
-                this.Save = null;
-                return save;
-            }
-        }
-
         protected object vesselListLock = new object();
         protected comms.VesselList _vessels;
         public comms.VesselList Vessels
@@ -127,21 +101,10 @@ namespace StandAloneMapView.server
                         client.SendTimeout = 1000;
                         stream.WriteTimeout = 1000;
 
-                        bool firstSendDone = false;
                         while(this.runWorker && client.Connected)
                         {
-                            var saveToSend = this.GetAndNullSave();
-
-                            if(!firstSendDone && saveToSend == null &&
-                               HighLogic.CurrentGame != null)
-                            {
-                                // For newly connected clients, force a sync
-                                saveToSend = comms.Save.FromCurrentGame();
-                            }
-
                             var vesselsToSend = this.GetAndNullVessels();
-
-                            if(saveToSend == null && vesselsToSend == null)
+                            if(vesselsToSend == null)
                             {
                                 // If you never send anything, the client always
                                 // reports that it is still connected, even when
@@ -149,13 +112,6 @@ namespace StandAloneMapView.server
                                 stream.WriteByte((byte)comms.TcpMessage.ConnectionTest);
                                 Thread.Sleep(500);
                                 continue;
-                            }
-
-                            if(saveToSend != null)
-                            {
-                                stream.WriteByte((byte)comms.TcpMessage.SaveUpdate);
-                                saveToSend.Send(stream);
-                                firstSendDone = true;
                             }
 
                             if(vesselsToSend != null)

@@ -29,7 +29,6 @@ namespace StandAloneMapView.client
     public class TrackingStation : utils.MonoBehaviourExtended
     {
         public SocketWorker socketWorker;
-        public bool LoadRequired = false;
         public VesselChecker VesselChecker;
 
         public TrackingStation()
@@ -66,13 +65,6 @@ namespace StandAloneMapView.client
                 if(message != null)
                     this.Log(message);
 
-                if(TcpWorker.Instance.SaveReceived.WaitOne(0))
-                {
-                    LogDebug("New save received from server.");
-                    TcpWorker.Instance.SaveReceived.Reset();
-                    this.LoadRequired = true;
-                }
-
                 Flight.UpdateTime(this.socketWorker.TimeUpdate);
                 this.UpdateVessel();
             }
@@ -90,37 +82,26 @@ namespace StandAloneMapView.client
 
         public void UpdateVessel()
         {
-            if(this.socketWorker.VesselUpdate == null)
+            var vesselUpdate = this.socketWorker.VesselUpdate;
+            if(vesselUpdate == null)
                 return;
 
-            if(this.LoadRequired)
-            {
-                Startup.LoadSave(true);
-                this.LoadRequired = false;
-                return;
-            }
 
-            TrackingStation.UpdateVessel(this, this.socketWorker.VesselUpdate);
+            TrackingStation.UpdateVessel(this, vesselUpdate);
         }
 
         public static void UpdateVessel(utils.MonoBehaviourExtended logger, comms.Vessel vesselUpdate)
         {
-            if(vesselUpdate == null)
-                return;
-
-            // go through vessels
-            // find the one with the correct id
-            // switch to it
-
             var vessel = FlightGlobals.Vessels.FirstOrDefault(v => v.id == vesselUpdate.Id);
             if(vessel != null)
             {
+                GamePersistence.SaveGame(Startup.SAVEFILE, Startup.SAVEDIRECTORY, SaveMode.OVERWRITE);
                 FlightDriver.StartAndFocusVessel(HighLogic.CurrentGame, FlightGlobals.Vessels.IndexOf(vessel));
+
                 return;
             }
 
-            logger.Log("Vessel {0} not found, reloading save (vessel id {1})", vesselUpdate.Name, vesselUpdate.Id);
-            Startup.LoadSave(true);
+            logger.Log("Vessel {0} not found (vessel id {1}).", vesselUpdate.Name, vesselUpdate.Id);
         }
     }
 }
