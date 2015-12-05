@@ -11,13 +11,35 @@ namespace StandAloneMapView.comms
         [Serializable]
         public class VesselInfo
         {
+            public Guid id {get; private set;}
             public string name {get; private set;}
             public byte type {get; private set;}
+            public bool landed {get; private set;}
+            public string landedAt {get; private set;}
+            public bool splashed {get; private set;}
+            public byte situation {get; private set;}
+            public double altitude {get; private set;}
+            public double latitude {get; private set;}
+            public double longitude {get; private set;}
+            public Orbit orbit {get; private set;}
+
+            public VesselInfo()
+            {
+            }
 
             public VesselInfo(global::Vessel kspVessel)
             {
-                this.name = kspVessel.name;
+                this.id = kspVessel.id;
+                this.name = kspVessel.vesselName;
                 this.type = (byte)kspVessel.vesselType;
+                this.landed = kspVessel.Landed;
+                this.landedAt = kspVessel.landedAt;
+                this.splashed = kspVessel.Splashed;
+                this.situation = (byte)kspVessel.situation;
+                this.altitude = kspVessel.altitude;
+                this.latitude = kspVessel.latitude;
+                this.longitude = kspVessel.longitude;
+                this.orbit = new Orbit(kspVessel.orbit);
             }
         }
 

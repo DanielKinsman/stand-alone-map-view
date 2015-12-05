@@ -37,8 +37,7 @@ namespace StandAloneMapView.server
         // user goes back to main menu.
         private static volatile Server instance = null;
 
-        protected bool saveSyncRequired = true;
-        protected bool vesselListUpdateRequired = false;
+        protected bool vesselListUpdateRequired = true;
         public double lastUniversalTime = 0.0;
 
         public IPEndPoint clientEndPoint { get; set; }
@@ -95,16 +94,16 @@ namespace StandAloneMapView.server
         {
             GameEvents.onVesselChange.Add(VesselChanged);
             GameEvents.onVesselDestroy.Add(VesselDestroyed);
-            GameEvents.onNewVesselCreated.Add(VesselCreated);
-
-            // todo check that docking triggers sync
+            GameEvents.onVesselCreate.Add(VesselCreated);
+            GameEvents.onVesselRename.Add(VesselRenamed);
         }
 
         public void UnsubscribeFromEvents()
         {
             GameEvents.onVesselChange.Remove(VesselChanged);
             GameEvents.onVesselDestroy.Remove(VesselDestroyed);
-            GameEvents.onNewVesselCreated.Remove(VesselCreated);
+            GameEvents.onVesselCreate.Remove(VesselCreated);
+            GameEvents.onVesselRename.Remove(VesselRenamed);
         }
 
         public override void OnDestroy()
@@ -144,18 +143,6 @@ namespace StandAloneMapView.server
             if(message != null)
                 this.Log(message);
 
-            // No need for thread safety, bool is atomic
-            if(this.saveSyncRequired)
-            {
-                // Sometimes when switching the scene (i.e. going back to the
-                // space center) the save itself doesn't contain any ships
-                // temporarily. Delay the sync file a little to compensate.
-                if(!this.IsInvoking("SaveSyncFile"))
-                    this.Invoke("SaveSyncFile", 2.0f);
-                this.saveSyncRequired = false;
-                this.vesselListUpdateRequired = true;
-            }
-
             if(this.vesselListUpdateRequired)
             {
                 if(!this.IsInvoking("SendVesselListUpdate"))
@@ -173,8 +160,8 @@ namespace StandAloneMapView.server
             // No such thing as GameEvents.onQuickLoadOrRevert, so do it ourselves
             if(Planetarium.GetUniversalTime() < this.lastUniversalTime)
             {
-                LogDebug("Time went backwards (quickload?), pending save sync.");
-                this.saveSyncRequired = true;
+                LogDebug("Time went backwards (quickload?).");
+                this.vesselListUpdateRequired = true;
             }
             this.lastUniversalTime = Planetarium.GetUniversalTime();
 
@@ -243,8 +230,8 @@ namespace StandAloneMapView.server
 
         public void VesselChanged(Vessel vessel)
         {
-            LogDebug ("Vessel changed ({0}, {1}), pending save sync.", vessel.name, vessel.id);
-            this.saveSyncRequired = true;
+            LogDebug ("Vessel changed ({0}, {1}).", vessel.name, vessel.id);
+            this.vesselListUpdateRequired = true;
         }
 
         public void VesselDestroyed(Vessel vessel)
@@ -254,16 +241,14 @@ namespace StandAloneMapView.server
 
         public void VesselCreated(Vessel vessel)
         {
-            LogDebug ("Vessel created ({0}, {1}), pending save sync.", vessel.name, vessel.id);
-            this.saveSyncRequired = true;
+            LogDebug ("Vessel created ({0}, {1}).", vessel.name, vessel.id);
+            this.vesselListUpdateRequired = true;
         }
 
-        public void SaveSyncFile()
+        public void VesselRenamed(GameEvents.HostedFromToAction<Vessel, string> shit)
         {
-            if(HighLogic.CurrentGame == null)
-                return;
-
-            this.tcpWorker.Save = comms.Save.FromCurrentGame();
+            LogDebug("Vessel renamed ({0}, {1}) {2}.", shit.host.id, shit.from, shit.to);
+            this.vesselListUpdateRequired = true;
         }
 
         public void SendVesselListUpdate()

@@ -10,7 +10,7 @@
     <RootNamespace>comms</RootNamespace>
     <AssemblyName>comms</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <ReleaseVersion>0.17</ReleaseVersion>
+    <ReleaseVersion>0.18</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,7 +55,6 @@
     <Compile Include="vessel.cs" />
     <Compile Include="orbit.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="save.cs" />
     <Compile Include="maneuver.cs" />
     <Compile Include="target.cs" />
     <Compile Include="tcpmessage.cs" />

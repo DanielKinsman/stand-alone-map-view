@@ -32,14 +32,16 @@ namespace StandAloneMapView.client
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class Flight : utils.MonoBehaviourExtended
     {
-        public SocketWorker socketWorker;
-
         public const string CONTROL_LOCK = "";
+
+        public SocketWorker socketWorker;
+        public VesselChecker VesselChecker;
 
         public Flight()
         {
             this.LogPrefix = "samv client";
             this.socketWorker = new SocketWorker();
+            this.VesselChecker = new VesselChecker(this);
         }
 
         public override void Awake()
@@ -81,7 +83,7 @@ namespace StandAloneMapView.client
 
                 var vesselUpdate = this.socketWorker.VesselUpdate;
                 var vessel = FlightGlobals.ActiveVessel;
-                if(vessel == null || vesselUpdate == null)
+                if(vessel == null || vessel.state == Vessel.State.DEAD || vesselUpdate == null)
                 {
                     // Main process has probably gone back to space center,
                     // so let's go back to the tracking station.
@@ -130,9 +132,8 @@ namespace StandAloneMapView.client
             if(vessel.vesselType != (VesselType)vesselUpdate.VesselType)
                 vessel.vesselType = (VesselType)vesselUpdate.VesselType;
 
-            // We can't release launch clamps, so delete them
-            if(vessel.situation == Vessel.Situations.PRELAUNCH)
-                DestroyLaunchClamps(vessel);
+            vessel.latitude = vesselUpdate.Latitude;
+            vessel.longitude = vesselUpdate.Longitude;
 
             // Vessels near the ground have a habit of exploding, so force them "on rails"
             const float OFF_RAILS_HEIGHT = 300.0f;
@@ -200,25 +201,7 @@ namespace StandAloneMapView.client
 
         public void CheckVessels()
         {
-            try
-            {
-                var vesselList = TcpWorker.Instance.Vessels;
-                if(vesselList == null)
-                    return;
-
-                var serverVessels = vesselList.Vessels;
-                var vesselsToKill = FlightGlobals.Vessels.Where(v => !serverVessels.ContainsKey(v.id)).ToList();
-                foreach(var v in vesselsToKill)
-                {
-                    LogDebug("Vessel {0} ({1}) does not exist on server, killing it", v.name, v.id);
-                    v.Die();
-                }
-            }
-            catch(Exception e)
-            {
-                LogException(e);
-                throw;
-            }
+            this.VesselChecker.Check();
         }
 
         public void ForceMapView()
@@ -250,17 +233,6 @@ namespace StandAloneMapView.client
 
             if(TimeWarp.CurrentRateIndex != timeUpdate.TimeWarpRateIndex)
                 TimeWarp.SetRate(timeUpdate.TimeWarpRateIndex, false);
-        }
-
-        public static void DestroyLaunchClamps(Vessel vessel)
-        {
-            // thanks go to hyper edit
-            if(vessel == null || vessel.parts == null)
-                return;
-
-            var clamps = vessel.parts.Where(p => p.Modules != null && p.Modules.OfType<LaunchClamp>().Any()).ToList();
-            foreach(var clamp in clamps)
-                clamp.Die();
         }
     }
 }

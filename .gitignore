@@ -5,6 +5,10 @@ client/bin
 comms/bin
 server/bin
 utils/bin
+client/obj
+comms/obj
+server/obj
+utils/obj
 lib/Assembly-CSharp.dll
 lib/UnityEngine.dll
 client/persistent_newgameblank.sfs
@@ -13,3 +17,4 @@ release.zip
 notes
 stats
 test.sh
+test_rss.sh

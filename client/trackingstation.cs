@@ -29,12 +29,13 @@ namespace StandAloneMapView.client
     public class TrackingStation : utils.MonoBehaviourExtended
     {
         public SocketWorker socketWorker;
-        public bool LoadRequired = false;
+        public VesselChecker VesselChecker;
 
         public TrackingStation()
         {
             this.LogPrefix = "samv client";
             this.socketWorker = new SocketWorker();
+            this.VesselChecker = new VesselChecker(this);
         }
 
         public override void Awake()
@@ -43,11 +44,12 @@ namespace StandAloneMapView.client
             // Seems unstable if you don't.
             this.InvokeRepeating("UnityWorker", 2.0f, 0.05f);
             this.socketWorker.Start();
-
+            this.InvokeRepeating("CheckVessels", 15.0f, 5.0f);
         }
 
         public override void OnDestroy()
         {
+            this.CancelInvoke("CheckVessels");
             if(this.socketWorker != null)
             {
                 this.socketWorker.Stop();
@@ -63,13 +65,6 @@ namespace StandAloneMapView.client
                 if(message != null)
                     this.Log(message);
 
-                if(TcpWorker.Instance.SaveReceived.WaitOne(0))
-                {
-                    LogDebug("New save received from server.");
-                    TcpWorker.Instance.SaveReceived.Reset();
-                    this.LoadRequired = true;
-                }
-
                 Flight.UpdateTime(this.socketWorker.TimeUpdate);
                 this.UpdateVessel();
             }
@@ -80,39 +75,33 @@ namespace StandAloneMapView.client
             }
         }
 
+        public void CheckVessels()
+        {
+            this.VesselChecker.Check();
+        }
+
         public void UpdateVessel()
         {
-            if(this.socketWorker.VesselUpdate == null)
+            var vesselUpdate = this.socketWorker.VesselUpdate;
+            if(vesselUpdate == null)
                 return;
 
-            if(this.LoadRequired)
-            {
-                Startup.LoadSave(true);
-                this.LoadRequired = false;
-                return;
-            }
-
-            TrackingStation.UpdateVessel(this, this.socketWorker.VesselUpdate);
+            CheckVessels();
+            TrackingStation.UpdateVessel(this, vesselUpdate);
         }
 
         public static void UpdateVessel(utils.MonoBehaviourExtended logger, comms.Vessel vesselUpdate)
         {
-            if(vesselUpdate == null)
-                return;
-
-            // go through vessels
-            // find the one with the correct id
-            // switch to it
-
             var vessel = FlightGlobals.Vessels.FirstOrDefault(v => v.id == vesselUpdate.Id);
             if(vessel != null)
             {
+                GamePersistence.SaveGame(Startup.SAVEFILE, Startup.SAVEDIRECTORY, SaveMode.OVERWRITE);
                 FlightDriver.StartAndFocusVessel(HighLogic.CurrentGame, FlightGlobals.Vessels.IndexOf(vessel));
+
                 return;
             }
 
-            logger.Log("Vessel {0} not found, reloading save (vessel id {1})", vesselUpdate.Name, vesselUpdate.Id);
-            Startup.LoadSave(true);
+            logger.Log("Vessel {0} not found (vessel id {1}).", vesselUpdate.Name, vesselUpdate.Id);
         }
     }
 }

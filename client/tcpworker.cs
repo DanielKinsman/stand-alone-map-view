@@ -33,12 +33,7 @@ namespace StandAloneMapView.client
         protected IPEndPoint serverEndPoint;
         public TcpClient Client;
         protected bool runWorker = true;
-        public string savePath;
-        public ManualResetEvent SaveReceived;
-        public ManualResetEvent AtLeastOneSaveReceived;
-
-        protected object _saveFileLock = new object();
-        public object SaveFileLock { get { return _saveFileLock; } }
+        public ManualResetEvent FirstVesselUpdateReceived;
 
         public ThreadSafeQueue<string> logMessages { get; private set; }
 
@@ -64,18 +59,16 @@ namespace StandAloneMapView.client
             get
             {
                 if(instance == null)
-                    instance = new TcpWorker(Startup.SavePath);
+                    instance = new TcpWorker();
 
                 return instance;
             }
         }
 
-        protected TcpWorker(string savePath)
+        protected TcpWorker()
         {
-            this.savePath = savePath;
-            this.SaveReceived = new ManualResetEvent(false);
-            this.AtLeastOneSaveReceived = new ManualResetEvent(false);
             this.logMessages = new ThreadSafeQueue<string>();
+            this.FirstVesselUpdateReceived = new ManualResetEvent(false);
         }
 
         public void Start()
@@ -95,9 +88,6 @@ namespace StandAloneMapView.client
             this.runWorker = false;
             if(this.Client != null)
                 this.Client.Close();
-
-            this.AtLeastOneSaveReceived.Reset();
-            this.SaveReceived.Reset();
         }
 
         public void Worker()
@@ -122,15 +112,9 @@ namespace StandAloneMapView.client
                                 case comms.TcpMessage.ConnectionTest:
                                     break;
 
-                                case StandAloneMapView.comms.TcpMessage.SaveUpdate:
-                                    Log("tcp client save game received");
-                                    comms.Save.ReadAndSave(stream, this.savePath, this.SaveFileLock);
-                                    this.AtLeastOneSaveReceived.Set();
-                                    this.SaveReceived.Set();
-                                    break;
-
                                 case comms.TcpMessage.VesselList:
                                     this.Vessels = comms.VesselList.FromStream(stream);
+                                    this.FirstVesselUpdateReceived.Set();
                                     break;
 
                                 default:

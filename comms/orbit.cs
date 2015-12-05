@@ -28,6 +28,7 @@ using System.Collections.Generic;
 namespace StandAloneMapView.comms
 {
     [ProtoContract]
+    [Serializable]
     public class Orbit
     {
         [ProtoMember(1)]
