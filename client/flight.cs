@@ -132,6 +132,9 @@ namespace StandAloneMapView.client
             if(vessel.vesselType != (VesselType)vesselUpdate.VesselType)
                 vessel.vesselType = (VesselType)vesselUpdate.VesselType;
 
+            vessel.latitude = vesselUpdate.Latitude;
+            vessel.longitude = vesselUpdate.Longitude;
+
             // Vessels near the ground have a habit of exploding, so force them "on rails"
             const float OFF_RAILS_HEIGHT = 300.0f;
             var height = Math.Min(vessel.GetHeightFromTerrain(), (float)vessel.altitude);
