@@ -83,7 +83,7 @@ namespace StandAloneMapView.client
 
                 var vesselUpdate = this.socketWorker.VesselUpdate;
                 var vessel = FlightGlobals.ActiveVessel;
-                if(vessel == null || vesselUpdate == null)
+                if(vessel == null || vessel.state == Vessel.State.DEAD || vesselUpdate == null)
                 {
                     // Main process has probably gone back to space center,
                     // so let's go back to the tracking station.
