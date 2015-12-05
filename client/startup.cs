@@ -30,7 +30,8 @@ namespace StandAloneMapView.client
     [KSPAddon(KSPAddon.Startup.MainMenu, false)]
     public class Startup : utils.MonoBehaviourExtended
     {
-        public const string SAVEFILE = "base_save";
+        public const string BASESAVEFILE = "base_save";
+        public const string SAVEFILE = "persistent";
         public const string SAVEDIRECTORY = "stand_alone_map_viewer_dont_touch";
 
         public static string KspSaveDirectory
@@ -219,6 +220,7 @@ namespace StandAloneMapView.client
         public static void LoadSave(bool startFlight)
         {
             var game = GamePersistence.LoadGame(Startup.SAVEFILE, Startup.SAVEDIRECTORY, true, false);
+            game.Load();
 
             if(startFlight)
             {
@@ -226,6 +228,7 @@ namespace StandAloneMapView.client
                 return;
             }
 
+            // KSP is stupid and throws bananas if you do this on a new save
             game.startScene = GameScenes.TRACKSTATION;
             game.Start();
         }
@@ -234,7 +237,7 @@ namespace StandAloneMapView.client
         {
             var saveFile = Path.Combine(Startup.KspSaveDirectory, Startup.SAVEFILE + ".sfs");
             var sourceSaveFile = Path.Combine(
-                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), Startup.SAVEFILE + ".sfs");
+                Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), Startup.BASESAVEFILE + ".sfs");
 
             File.Copy(sourceSaveFile, saveFile, true);
         }
