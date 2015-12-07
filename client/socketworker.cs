@@ -200,7 +200,9 @@ namespace StandAloneMapView.client
                 throw new InvalidOperationException("The server hasn't contacted us yet!");
 
             var packet = new comms.ClientPacket();
-            packet.ManeuverList = new comms.ManeuverList(maneuvers);
+            if(maneuvers != null)
+                packet.ManeuverList = new comms.ManeuverList(maneuvers);
+
             packet.Target = new comms.Target(target);
 
             var buffer = packet.Make();
