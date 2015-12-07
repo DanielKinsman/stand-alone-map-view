@@ -26,6 +26,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace StandAloneMapView.client
 {
@@ -111,9 +112,14 @@ namespace StandAloneMapView.client
 
                 this.UpdateManeuverNodes();
                 this.UpdateTarget();
-                this.socketWorker.Send(vessel.patchedConicSolver.maneuverNodes,
-                                       vessel.targetObject);
 
+                IList<ManeuverNode> maneuvers;
+                if(vessel.patchedConicSolver == null)
+                    maneuvers = null;
+                else
+                    maneuvers = vessel.patchedConicSolver.maneuverNodes;
+
+                this.socketWorker.Send(maneuvers, vessel.targetObject);
                 this.UpdateVessel(vessel, vesselUpdate);
             }
             catch(Exception e)

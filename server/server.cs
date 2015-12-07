@@ -27,6 +27,7 @@ using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.Threading;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace StandAloneMapView.server
 {
@@ -177,8 +178,12 @@ namespace StandAloneMapView.server
                 if(vessel != null)
                 {
                     packet.Vessel = new comms.Vessel(vessel);
-                    packet.ManeuverList = new comms.ManeuverList(
-                                                vessel.patchedConicSolver.maneuverNodes);
+
+                    if(vessel.patchedConicSolver == null)
+                        packet.ManeuverList = new comms.ManeuverList();
+                    else
+                        packet.ManeuverList = new comms.ManeuverList(vessel.patchedConicSolver.maneuverNodes);
+
                     packet.Target = new comms.Target(vessel.targetObject);
                 }
 

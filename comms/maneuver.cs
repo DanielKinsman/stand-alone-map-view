@@ -99,6 +99,7 @@ namespace StandAloneMapView.comms
 
         public ManeuverList()
         {
+            this.Maneuvers = null;
         }
 
         public ManeuverList(IList<ManeuverNode> maneuverList)
@@ -112,7 +113,7 @@ namespace StandAloneMapView.comms
         public void UpdateManeuverNodes(PatchedConicSolver solver)
         {
             if(solver == null)
-                throw new ArgumentNullException("solver");
+                return;
 
             // Avoid flickering by not overwriting nodes where possible
 
