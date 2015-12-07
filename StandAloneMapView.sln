@@ -49,7 +49,7 @@ Global
 		$4.inheritsSet = VisualStudio
 		$4.inheritsScope = text/plain
 		$4.scope = text/plain
-		version = 0.19
+		version = 0.21
 		StartupItem = client\client.csproj
 	EndGlobalSection
 EndGlobal

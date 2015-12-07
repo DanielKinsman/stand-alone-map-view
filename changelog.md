@@ -1,3 +1,7 @@
+v0.21
+
+* Fix a bug with map view not working in career mode before maneuver nodes are available
+
 v0.19
 
 * No parts required on client apart from cubic strut, can save ram by deleting them (#20)
