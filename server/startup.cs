@@ -82,6 +82,8 @@ namespace StandAloneMapView.server
         public override void OnGUI()
         {
             this.toggleWindow.OnGUI();
+
+            base.OnGUI();
         }
 
         public override void DrawWindow(int id)
