@@ -32,7 +32,14 @@ namespace StandAloneMapView.utils
         public virtual void Start(){}
         public virtual void Update(){}
         public virtual void OnDestroy(){}
-        public virtual void OnGUI(){}
+
+        public virtual void OnGUI()
+        {
+            if (this.ShowGUI)
+            {
+                DrawGUI();
+            }
+        }
 
         public string WindowCaption = string.Empty;
         public Rect WindowBounds;
@@ -68,11 +75,6 @@ namespace StandAloneMapView.utils
                     return;
 
                 _showGUI = value;
-
-                if(_showGUI)
-                    RenderingManager.AddToPostDrawQueue(5, this.DrawGUI);
-                else
-                    RenderingManager.RemoveFromPostDrawQueue(5, this.DrawGUI);
             }
         }
 
