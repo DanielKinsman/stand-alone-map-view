@@ -47,9 +47,7 @@ namespace StandAloneMapView.client
         }
 
         public Settings Settings;
-
         public bool start = false;
-        public bool firstLoadDone = false;
 
         public Startup()
         {
@@ -82,10 +80,7 @@ namespace StandAloneMapView.client
             if(message != null)
                 LogDebug(message);
 
-            if(TcpWorker.Instance.FirstVesselUpdateReceived.WaitOne(0))
-                this.firstLoadDone = true;
-
-            if(this.firstLoadDone && this.start)
+            if(TcpWorker.Instance.VesselUpdateReceived.WaitOne(0) || this.start)
             {
                 this.start = false;
                 try
@@ -112,7 +107,6 @@ namespace StandAloneMapView.client
             TcpWorker.Instance.Stop();
             TcpWorker.Instance.Start();
             this.start = this.Settings.StartAutomatically;
-            this.firstLoadDone = false;
         }
 
         public static void CopyBaseSave()

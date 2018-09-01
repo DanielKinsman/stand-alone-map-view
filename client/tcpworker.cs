@@ -34,7 +34,7 @@ namespace StandAloneMapView.client
         public TcpClient Client;
         protected bool runWorker = true;
         protected Thread worker = null;
-        public ManualResetEvent FirstVesselUpdateReceived;
+        public AutoResetEvent VesselUpdateReceived;
 
         public ThreadSafeQueue<string> logMessages { get; private set; }
 
@@ -69,7 +69,7 @@ namespace StandAloneMapView.client
         protected TcpWorker()
         {
             this.logMessages = new ThreadSafeQueue<string>();
-            this.FirstVesselUpdateReceived = new ManualResetEvent(false);
+            this.VesselUpdateReceived = new AutoResetEvent(false);
         }
 
         public void Start()
@@ -119,7 +119,7 @@ namespace StandAloneMapView.client
 
                                 case comms.TcpMessage.VesselList:
                                     this.Vessels = comms.VesselList.FromStream(stream);
-                                    this.FirstVesselUpdateReceived.Set();
+                                    this.VesselUpdateReceived.Set();
                                     break;
 
                                 default:
