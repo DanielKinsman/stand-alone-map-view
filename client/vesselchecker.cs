@@ -56,7 +56,7 @@ namespace StandAloneMapView.client
         {
             try
             {
-                this.Logger.Log("creating vessel {0} {1}", vesselInfo.name, vesselInfo.id);
+                this.Logger.LogDebug("creating vessel {0} {1}", vesselInfo.name, vesselInfo.id);
                 var pv = new ProtoVessel(this.DummyVesselConfigNode, HighLogic.CurrentGame);
 
                 pv.vesselID = vesselInfo.id;

@@ -101,7 +101,7 @@ namespace StandAloneMapView.client
                 return;
             }
 
-            logger.Log("Vessel {0} not found (vessel id {1}).", vesselUpdate.Name, vesselUpdate.Id);
+            logger.LogDebug("Vessel {0} not found (vessel id {1}).", vesselUpdate.Name, vesselUpdate.Id);
         }
     }
 }
