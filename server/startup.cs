@@ -38,11 +38,11 @@ namespace StandAloneMapView.server
 
         public override void Awake()
         {
-            this.ShowGUI = true;
+            /*this.ShowGUI = true;
             this.toggleWindow = new utils.ToggleableWindow("samv_server/icon");
             this.WindowCaption = "samv";
             this.WindowBounds.width = 1;
-            this.WindowBounds.height = 1;
+            this.WindowBounds.height = 1;*/
         }
 
         public override void Start()
@@ -58,7 +58,7 @@ namespace StandAloneMapView.server
 #endif
         }
 
-        public override void DrawGUI()
+        /*public override void DrawGUI()
         {
             if(this.toggleWindow.WasToggled)
             {
@@ -123,6 +123,6 @@ namespace StandAloneMapView.server
 
             if(GUILayout.Button("Save"))
                 this.Settings.Save();
-        }
+        }*/
     }
 }

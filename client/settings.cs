@@ -60,7 +60,7 @@ namespace StandAloneMapView.client
             this.Server = utils.Settings.DEFAULT_SERVER;
             this.ServerPort = utils.Settings.DEFAULT_SERVER_PORT;
             this.RecievePort = utils.Settings.DEFAULT_CLIENT_PORT;
-            this.StartAutomatically = false;
+            this.StartAutomatically = true;
         }
 
         public void Save()

@@ -33,6 +33,7 @@ namespace StandAloneMapView.client
         protected IPEndPoint serverEndPoint;
         public TcpClient Client;
         protected bool runWorker = true;
+        protected Thread worker = null;
         public ManualResetEvent FirstVesselUpdateReceived;
 
         public ThreadSafeQueue<string> logMessages { get; private set; }
@@ -80,12 +81,16 @@ namespace StandAloneMapView.client
             this.serverEndPoint = new IPEndPoint(serverAddress, settings.ServerPort);
 
             this.runWorker = true;
-            new Thread(Worker).Start();
+            this.worker = new Thread(Worker);
+            worker.Start();
         }
 
         public void Stop()
         {
             this.runWorker = false;
+            if(this.worker != null)
+                this.worker.Join();
+
             if(this.Client != null)
                 this.Client.Close();
         }
@@ -121,8 +126,6 @@ namespace StandAloneMapView.client
                                     throw new IOException("Unknown message type {0}", (byte)messageType);
                             }
                         }
-
-                        this.Client.Close();
                     }
                 }
                 catch(Exception e)
@@ -132,13 +135,17 @@ namespace StandAloneMapView.client
                         throw;
                 }
 
-                Thread.Sleep(500);
+                if(this.runWorker)
+                    Thread.Sleep(5000);
             }
         }
 
         public void Log(string message, params object[] formatParams)
         {
-            this.logMessages.Push(string.Format(message, formatParams));
+            var thread = System.Threading.Thread.CurrentThread.ManagedThreadId;
+            message = string.Format(message, formatParams);
+            message  = string.Format("{0} {1}", thread, message);
+            this.logMessages.Push(message);
         }
     }
 }
