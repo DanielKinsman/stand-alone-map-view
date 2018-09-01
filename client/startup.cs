@@ -61,7 +61,6 @@ namespace StandAloneMapView.client
 
         public override void Awake()
         {
-            try{
             // Replacing the menu is very hacky, as simply overriding the
             // onPressed callback of existing buttons doesn't work.
             /*var menu = FindObjectOfType<MainMenu>();
@@ -80,8 +79,6 @@ namespace StandAloneMapView.client
             this.WindowBounds.height = 1;*/
 
             Startup.CopyBaseSave();
-            }catch(System.Exception e){LogException(e);throw;}
-            LogDebug("Awake 999");
         }
 
         //public override void OnDestroy()
@@ -129,7 +126,8 @@ namespace StandAloneMapView.client
                 this.start = false;
                 try
                 {
-                    LoadSave();
+                    StandAloneMapView.utils.Saves.Load(
+                        Startup.SAVEDIRECTORY, Startup.SAVEFILE, GameScenes.TRACKSTATION, this);
                 }
                 catch(Exception e)
                 {
@@ -216,27 +214,6 @@ namespace StandAloneMapView.client
                 this.Reset();
             }
         }*/
-
-        public static void LoadSave()
-        {
-            LoadSave(false);
-        }
-
-        public static void LoadSave(bool startFlight)
-        {
-            var game = GamePersistence.LoadGame(Startup.SAVEFILE, Startup.SAVEDIRECTORY, true, false);
-            game.Load();
-
-            if(startFlight)
-            {
-                FlightDriver.StartAndFocusVessel(game, 0);
-                return;
-            }
-
-            // KSP is stupid and throws bananas if you do this on a new save
-            game.startScene = GameScenes.TRACKSTATION;
-            game.Start();
-        }
 
         public static void CopyBaseSave()
         {
