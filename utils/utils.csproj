@@ -37,7 +37,6 @@
     <Compile Include="MonoBehaviourExtended.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="settings.cs" />
-    <Compile Include="toggleablewindow.cs" />
     <Compile Include="threadsafequeue.cs" />
     <Compile Include="saves.cs" />
   </ItemGroup>
