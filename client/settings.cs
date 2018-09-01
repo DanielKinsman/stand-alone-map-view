@@ -71,7 +71,11 @@ namespace StandAloneMapView.client
         public static Settings Load()
         {
             if(!System.IO.File.Exists(Settings.Path))
-                return new Settings();
+            {
+                var settings = new Settings();
+                settings.Save();
+                return settings;
+            }
 
             return utils.Settings.Load<Settings>(Settings.Path, SETTINGS_NODENAME);
         }
