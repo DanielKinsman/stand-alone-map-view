@@ -32,6 +32,7 @@ namespace StandAloneMapView.server
         protected UdpClient socket;
         public IPEndPoint clientEndPoint;
         private bool runThread;
+        protected Thread worker = null;
 
         public ThreadSafeQueue<string> logMessages { get; private set; }
 
@@ -93,12 +94,18 @@ namespace StandAloneMapView.server
             this.socket = socket;
             this.clientEndPoint = clientEndPoint;
             this.runThread = true;
-            new Thread(Worker).Start();
+            this.worker = new Thread(Worker);
+            worker.Start();
         }
 
         public void Stop()
         {
             this.runThread = false;
+            if(this.socket != null)
+                this.socket.Close(); // otherwise Worker will block
+
+            if(this.worker != null)
+                this.worker.Join();
         }
 
         public void Worker()
@@ -140,7 +147,10 @@ namespace StandAloneMapView.server
                 {
                     Log("SocketWorker exception: {0} {1}", e.Message, e.StackTrace);
                     if(e is SocketException || e is System.IO.IOException)
-                        System.Threading.Thread.Sleep(100);
+                    {
+                        if(this.runThread)
+                            System.Threading.Thread.Sleep(100);
+                    }
                     else
                         throw;
                 }

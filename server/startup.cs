@@ -29,21 +29,21 @@ namespace StandAloneMapView.server
     public class Startup : utils.MonoBehaviourExtended
     {
         public Settings Settings;
-        public utils.ToggleableWindow toggleWindow;
+        //public utils.ToggleableWindow toggleWindow;
 
         public Startup()
         {
             this.LogPrefix = "samv server";
         }
 
-        public override void Awake()
+        /*public override void Awake()
         {
-            /*this.ShowGUI = true;
+            this.ShowGUI = true;
             this.toggleWindow = new utils.ToggleableWindow("samv_server/icon");
             this.WindowCaption = "samv";
             this.WindowBounds.width = 1;
-            this.WindowBounds.height = 1;*/
-        }
+            this.WindowBounds.height = 1;
+        }*/
 
         public override void Start()
         {

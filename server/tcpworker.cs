@@ -34,6 +34,7 @@ namespace StandAloneMapView.server
         protected TcpListener listener;
 
         protected bool runWorker = true;
+        protected Thread worker = null;
 
         public ThreadSafeQueue<string> logMessages { get; private set; }
 
@@ -75,7 +76,8 @@ namespace StandAloneMapView.server
             this.listenerEndPoint = new IPEndPoint(IPAddress.Any, settings.ListenPort);
             this.listener = new TcpListener(this.listenerEndPoint);
             this.runWorker = true;
-            new Thread(Worker).Start();
+            this.worker = new Thread(Worker);
+            worker.Start();
         }
 
         public void Stop()
@@ -83,6 +85,9 @@ namespace StandAloneMapView.server
             this.runWorker = false;
             if(this.listener != null)
                 this.listener.Stop();
+
+            if(this.worker != null)
+                this.worker.Join();
         }
 
         public void Worker()
@@ -129,7 +134,8 @@ namespace StandAloneMapView.server
                         throw;
                 }
 
-                Thread.Sleep(500);
+                if(this.runWorker)
+                    Thread.Sleep(500);
             }
         }
 

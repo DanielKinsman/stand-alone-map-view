@@ -88,11 +88,11 @@ namespace StandAloneMapView.client
         public void Stop()
         {
             this.runWorker = false;
-            if(this.worker != null)
-                this.worker.Join();
-
             if(this.Client != null)
                 this.Client.Close();
+
+            if(this.worker != null)
+                this.worker.Join();
         }
 
         public void Worker()
