@@ -33,51 +33,6 @@ namespace StandAloneMapView.utils
         public virtual void Update(){}
         public virtual void OnDestroy(){}
 
-        /*public virtual void OnGUI()
-        {
-            if (this.ShowGUI)
-            {
-                DrawGUI();
-            }
-        }
-
-        public string WindowCaption = string.Empty;
-        public Rect WindowBounds;
-        public int WindowId = -1;
-
-        public virtual void DrawGUI()
-        {
-            GUI.skin = HighLogic.Skin;
-
-            if(this.WindowId < 0)
-                this.WindowId =  UnityEngine.Random.Range(2000, int.MaxValue);
-
-            if(this.WindowBounds.width == 0 || this.WindowBounds.height == 0)
-                this.WindowBounds = new Rect(50, 50, 250, 100);
-
-            this.WindowBounds =  GUILayout.Window(this.WindowId,
-                                                 this.WindowBounds,
-                                                 DrawWindow,
-                                                 this.WindowCaption,
-                                                 GUILayout.ExpandWidth(true),
-                                                 GUILayout.ExpandHeight(true));
-        }
-
-        public virtual void DrawWindow(int id){}
-
-        private bool _showGUI = false;
-        public bool ShowGUI
-        {
-            get { return _showGUI; }
-            set
-            {
-                if(_showGUI == value)
-                    return;
-
-                _showGUI = value;
-            }
-        }*/
-
         public string LogFormat(string message, params object[] formatParams)
         {
             message = string.Format(message, formatParams);

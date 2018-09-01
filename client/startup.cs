@@ -48,11 +48,8 @@ namespace StandAloneMapView.client
 
         public Settings Settings;
 
-        //public utils.ToggleableWindow toggleWindow;
-
         public bool start = false;
         public bool firstLoadDone = false;
-        //public TextProButton3D startButton;
 
         public Startup()
         {
@@ -61,35 +58,8 @@ namespace StandAloneMapView.client
 
         public override void Awake()
         {
-            // Replacing the menu is very hacky, as simply overriding the
-            // onPressed callback of existing buttons doesn't work.
-            /*var menu = FindObjectOfType<MainMenu>();
-            menu.startBtn.GetComponent<TextMesh>().text = "";
-            this.startButton = (TextProButton3D)TextProButton3D.Instantiate(menu.startBtn);
-            this.startButton.GetComponent<TextMesh>().text = "Waiting for server sync...";
-            this.startButton.onReleased += new Callback(StartButtonReleased);
-
-            Destroy(menu.startBtn); // Causes a NullReferenceException on quit,
-                                    // nothing I can do about it.
-
-            this.ShowGUI = true;
-            this.toggleWindow = new utils.ToggleableWindow("samv_client/icon");
-            this.WindowCaption = "samv";
-            this.WindowBounds.width = 1;
-            this.WindowBounds.height = 1;*/
-
             Startup.CopyBaseSave();
         }
-
-        //public override void OnDestroy()
-        //{
-        //    this.startButton.onReleased -= new Callback(StartButtonReleased);
-        //}
-
-        //public void StartButtonReleased()
-        //{
-        //    this.start = true;
-        //}
 
         public override void Start()
         {
@@ -111,9 +81,6 @@ namespace StandAloneMapView.client
             var message = TcpWorker.Instance.logMessages.TryPop(null);
             if(message != null)
                 LogDebug(message);
-
-            //if(this.firstLoadDone)
-                //this.startButton.GetComponent<TextMesh>().text = "Start map view";
 
             if(TcpWorker.Instance.FirstVesselUpdateReceived.WaitOne(0))
                 this.firstLoadDone = true;
@@ -146,78 +113,7 @@ namespace StandAloneMapView.client
             TcpWorker.Instance.Start();
             this.start = this.Settings.StartAutomatically;
             this.firstLoadDone = false;
-            //this.startButton.GetComponent<TextMesh>().text = "Waiting for server sync...";
         }
-
-        /*public override void DrawGUI()
-        {
-            if(this.toggleWindow.WasToggled)
-            {
-                if(this.toggleWindow.IsOn)
-                {
-                    this.WindowCaption = "Stand alone map view settings";
-                    this.WindowBounds.width = 250;
-                    this.WindowBounds.height = 100;
-                }
-                else
-                {
-                    this.WindowCaption = "samv";
-                    this.WindowBounds.width = this.toggleWindow.CompactedWidth;
-                    this.WindowBounds.height = this.toggleWindow.CompactedHeight;
-                }
-            }
-
-            base.DrawGUI();
-        }
-
-        public override void OnGUI()
-        {
-            this.toggleWindow.OnGUI();
-
-            base.OnGUI();
-        }
-
-        public override void DrawWindow(int id)
-        {
-            this.toggleWindow.DrawWindow();
-
-            if(this.toggleWindow.IsOn)
-                DrawWindowContents();
-
-            GUI.DragWindow();
-        }
-
-        public void DrawWindowContents()
-        {
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("server ip/hostname:");
-            this.Settings.Server = GUILayout.TextField(this.Settings.Server);
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("server tcp port:");
-            this.Settings.ServerPort=Convert.ToInt32(
-                GUILayout.TextField(this.Settings.ServerPort.ToString()));
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("udp receiving port:");
-            this.Settings.RecievePort=Convert.ToInt32(
-                GUILayout.TextField(this.Settings.RecievePort.ToString()));
-            GUILayout.EndHorizontal();
-
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Start automatically:");
-            this.Settings.StartAutomatically=Convert.ToBoolean(
-                GUILayout.Toggle(this.Settings.StartAutomatically, string.Empty));
-            GUILayout.EndHorizontal();
-
-            if(GUILayout.Button("Set and save"))
-            {
-                this.Settings.Save();
-                this.Reset();
-            }
-        }*/
 
         public static void CopyBaseSave()
         {
