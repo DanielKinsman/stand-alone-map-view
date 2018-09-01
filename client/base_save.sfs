@@ -1,16 +1,23 @@
 GAME
 {
-	version = 1.0.5
-	Title = samv_base (SANDBOX)
+	version = 1.4.4
+	Title = default (SANDBOX)
 	Description = No description available.
 	linkURL = 
 	linkCaption = 
 	Mode = SANDBOX
 	Status = 1
+	Seed = 1989222731
 	scene = 5
 	editor = None
 	flag = Squad/Flags/default
 	launchID = 1
+	defaultVABLaunchSite = LaunchPad
+	defaultSPHLaunchSite = Runway
+	modded = True
+	envInfo =  - Environment Info - Unix 7FFFFFFFFFFFFFFF  Args: KSP.x86_64  - 
+	versionFull = 1.4.4.2215 (LinuxPlayer)
+	versionCreated = 1.4.4.2215 (LinuxPlayer)
 	PARAMETERS
 	{
 		preset = Normal
@@ -31,7 +38,7 @@ GAME
 			CanLeaveToEditor = True
 			CanLeaveToTrackingStation = True
 			CanLeaveToSpaceCenter = True
-			CanLeaveToMainMenu = False
+			CanLeaveToMainMenu = True
 		}
 		EDITOR
 		{
@@ -58,17 +65,25 @@ GAME
 			CanGoInTrackingStation = True
 			CanLaunchAtPad = True
 			CanLaunchAtRunway = True
+			CanGoToAdmin = True
+			CanGoToAstronautC = True
+			CanGoToMissionControl = True
+			CanGoToRnD = True
+			CanSelectFlag = True
 			CanLeaveToMainMenu = True
 		}
 		DIFFICULTY
 		{
 			AutoHireCrews = False
 			MissingCrewsRespawn = True
+			RespawnTimer = 7200
 			BypassEntryPurchaseAfterResearch = True
 			AllowStockVessels = True
 			IndestructibleFacilities = False
 			ResourceAbundance = 1
 			ReentryHeatScale = 1
+			EnableCommNet = True
+			AllowOtherLaunchSites = True
 		}
 		CAREER
 		{
@@ -83,12 +98,101 @@ GAME
 			RepLossMultiplier = 1
 			RepLossDeclined = 1
 		}
+		CommNetParams
+		{
+			requireSignalForControl = False
+			plasmaBlackout = False
+			rangeModifier = 1
+			DSNModifier = 1
+			occlusionMultiplierVac = 0.9
+			occlusionMultiplierAtm = 0.75
+			enableGroundStations = True
+		}
+		AdvancedParams
+		{
+			EnableKerbalExperience = False
+			ImmediateLevelUp = False
+			AllowNegativeCurrency = False
+			PressurePartLimits = False
+			GPartLimits = False
+			GKerbalLimits = False
+			KerbalGToleranceMult = 1
+			ResourceTransferObeyCrossfeed = False
+			ActionGroupsAlways = False
+			BuildingImpactDamageMult = 0.05
+			PartUpgradesInSandbox = False
+			PartUpgradesInCareer = True
+			PartUpgradesInMission = False
+		}
+		MissionParamsGeneral
+		{
+			enableFunding = False
+			startingFunds = 100000
+			spacer = 
+			enableKerbalLevels = False
+			kerbalLevelPilot = 4
+			kerbalLevelScientist = 4
+			kerbalLevelEngineer = 4
+			spacer2 = 
+			preventVesselRecovery = False
+		}
+		MissionParamsExtras
+		{
+			facilityOpenAC = False
+			astronautHiresAreFree = True
+			spacer = 
+			facilityOpenEditor = False
+			launchSitesOpen = True
+			spacer2 = 
+			cheatsEnabled = False
+		}
+		MissionParamsFacilities
+		{
+			facilityLevelAdmin = 3
+			facilityLevelAC = 3
+			facilityLevelLaunchpad = 3
+			facilityLevelMC = 3
+			facilityLevelRD = 3
+			facilityLevelRunway = 3
+			facilityLevelSPH = 3
+			facilityLevelTS = 3
+			facilityLevelVAB = 3
+		}
+	}
+	SCENARIO
+	{
+		name = CommNetScenario
+		scene = 7, 8, 5, 6
+	}
+	SCENARIO
+	{
+		name = PartUpgradeManager
+		scene = 6, 5, 7
+		UPGRADES
+		{
+			Unlocks
+			{
+			}
+			Enableds
+			{
+			}
+		}
+	}
+	SCENARIO
+	{
+		name = ResourceScenario
+		scene = 7, 8, 5, 6, 21
+		RESOURCE_SETTINGS
+		{
+			GameSeed = 1398800320
+			MaxDeltaTime = 21600
+		}
 	}
 	SCENARIO
 	{
 		name = ScenarioNewGameIntro
 		scene = 5, 6, 8
-		kscComplete = True
+		kscComplete = False
 		editorComplete = False
 		tsComplete = False
 	}
@@ -107,97 +211,79 @@ GAME
 	}
 	SCENARIO
 	{
+		name = ScenarioAchievements
+		scene = 7, 8, 5, 6
+	}
+	SCENARIO
+	{
+		name = ScenarioCustomWaypoints
+		scene = 7, 8, 21
+	}
+	SCENARIO
+	{
 		name = ScenarioDestructibles
 		scene = 5, 7, 6, 8
-		SpaceCenter/VehicleAssemblyBuilding/Facility/VAB2
+		SpaceCenter/Administration/Facility/mainBuilding
 		{
 			intact = True
 		}
-		SpaceCenter/TrackingStation/Facility/OuterDish
+		SpaceCenter/AstronautComplex/Facility/building
 		{
 			intact = True
 		}
-		SpaceCenter/TrackingStation/Facility/building
+		SpaceCenter/LaunchPad/Facility/LaunchPadMedium/ksp_pad_cylTank
 		{
 			intact = True
 		}
-		SpaceCenter/SpaceplaneHangar/Facility/Building
+		SpaceCenter/LaunchPad/Facility/LaunchPadMedium/ksp_pad_launchPad
 		{
 			intact = True
 		}
-		SpaceCenter/ResearchAndDevelopment/Facility/ForeverAlone
+		SpaceCenter/LaunchPad/Facility/LaunchPadMedium/ksp_pad_sphereTank
 		{
 			intact = True
 		}
-		SpaceCenter/ResearchAndDevelopment/Facility/mainBuilding
+		SpaceCenter/LaunchPad/Facility/LaunchPadMedium/ksp_pad_waterTower
 		{
 			intact = True
 		}
-		SpaceCenter/MissionControl/Facility/mainBuilding
+		SpaceCenter/LaunchPad/Facility/LaunchPadMedium/KSCFlagPoleLaunchPad
 		{
 			intact = True
 		}
-		SpaceCenter/LaunchPad/Facility/Flag
+		SpaceCenter/MissionControl/Facility/building
 		{
 			intact = True
 		}
-		SpaceCenter/AstronautComplex/Facility/mainBuilding
+		SpaceCenter/ResearchAndDevelopment/Facility/ksp_pad_cylTank
 		{
 			intact = True
 		}
-		SpaceCenter/FlagPole/Facility
+		SpaceCenter/ResearchAndDevelopment/Facility/SmallLab
 		{
 			intact = True
 		}
-		SpaceCenter/Administration/Facility/Building
+		SpaceCenter/ResearchAndDevelopment/Facility/CentralBuilding
 		{
 			intact = True
 		}
-		SpaceCenter/VehicleAssemblyBuilding/Facility/ksp_pad_cylTank
+		SpaceCenter/ResearchAndDevelopment/Facility/MainBuilding
 		{
 			intact = True
 		}
-		SpaceCenter/VehicleAssemblyBuilding/Facility/Tank
+		SpaceCenter/ResearchAndDevelopment/Facility/CornerLab
 		{
 			intact = True
 		}
-		SpaceCenter/VehicleAssemblyBuilding/Facility/mainBuilding
+		SpaceCenter/ResearchAndDevelopment/Facility/WindTunnel
 		{
 			intact = True
 		}
-		SpaceCenter/VehicleAssemblyBuilding/Facility/PodMemorial
+		SpaceCenter/ResearchAndDevelopment/Facility/Observatory
 		{
 			intact = True
 		}
-		SpaceCenter/TrackingStation/Facility/dish_array/dish_south
-		{
-			intact = True
-		}
-		SpaceCenter/TrackingStation/Facility/dish_array/dish_north
-		{
-			intact = True
-		}
-		SpaceCenter/TrackingStation/Facility/dish_array/dish_east
-		{
-			intact = True
-		}
-		SpaceCenter/TrackingStation/Facility/MainBuilding
-		{
-			intact = True
-		}
-		SpaceCenter/SpaceplaneHangar/Facility/Tank
-		{
-			intact = True
-		}
-		SpaceCenter/SpaceplaneHangar/Facility/ksp_pad_cylTank
-		{
-			intact = True
-		}
-		SpaceCenter/SpaceplaneHangar/Facility/ksp_pad_waterTower
-		{
-			intact = True
-		}
-		SpaceCenter/SpaceplaneHangar/Facility/mainBuilding
+		SpaceCenter/ResearchAndDevelopment/Facility/SideLab
 		{
 			intact = True
 		}
@@ -241,67 +327,55 @@ GAME
 		{
 			intact = True
 		}
-		SpaceCenter/ResearchAndDevelopment/Facility/ksp_pad_cylTank
+		SpaceCenter/SpaceplaneHangar/Facility/Tank
 		{
 			intact = True
 		}
-		SpaceCenter/ResearchAndDevelopment/Facility/SmallLab
+		SpaceCenter/SpaceplaneHangar/Facility/ksp_pad_cylTank
 		{
 			intact = True
 		}
-		SpaceCenter/ResearchAndDevelopment/Facility/CentralBuilding
+		SpaceCenter/SpaceplaneHangar/Facility/ksp_pad_waterTower
 		{
 			intact = True
 		}
-		SpaceCenter/ResearchAndDevelopment/Facility/MainBuilding
+		SpaceCenter/SpaceplaneHangar/Facility/mainBuilding
 		{
 			intact = True
 		}
-		SpaceCenter/ResearchAndDevelopment/Facility/CornerLab
+		SpaceCenter/TrackingStation/Facility/dish_array/dish_south
 		{
 			intact = True
 		}
-		SpaceCenter/ResearchAndDevelopment/Facility/WindTunnel
+		SpaceCenter/TrackingStation/Facility/dish_array/dish_north
 		{
 			intact = True
 		}
-		SpaceCenter/ResearchAndDevelopment/Facility/Observatory
+		SpaceCenter/TrackingStation/Facility/dish_array/dish_east
 		{
 			intact = True
 		}
-		SpaceCenter/ResearchAndDevelopment/Facility/SideLab
+		SpaceCenter/TrackingStation/Facility/MainBuilding
 		{
 			intact = True
 		}
-		SpaceCenter/MissionControl/Facility/building
+		SpaceCenter/VehicleAssemblyBuilding/Facility/ksp_pad_cylTank
 		{
 			intact = True
 		}
-		SpaceCenter/LaunchPad/Facility/LaunchPadMedium/ksp_pad_cylTank
+		SpaceCenter/VehicleAssemblyBuilding/Facility/Tank
 		{
 			intact = True
 		}
-		SpaceCenter/LaunchPad/Facility/LaunchPadMedium/ksp_pad_launchPad
+		SpaceCenter/VehicleAssemblyBuilding/Facility/mainBuilding
 		{
 			intact = True
 		}
-		SpaceCenter/LaunchPad/Facility/LaunchPadMedium/ksp_pad_sphereTank
+		SpaceCenter/VehicleAssemblyBuilding/Facility/PodMemorial
 		{
 			intact = True
 		}
-		SpaceCenter/LaunchPad/Facility/LaunchPadMedium/ksp_pad_waterTower
-		{
-			intact = True
-		}
-		SpaceCenter/LaunchPad/Facility/LaunchPadMedium/KSCFlagPoleLaunchPad
-		{
-			intact = True
-		}
-		SpaceCenter/AstronautComplex/Facility/building
-		{
-			intact = True
-		}
-		SpaceCenter/Administration/Facility/mainBuilding
+		SpaceCenter/FlagPole/Facility
 		{
 			intact = True
 		}
@@ -321,53 +395,59 @@ GAME
 	}
 	SCENARIO
 	{
-		name = ResourceScenario
-		scene = 5, 7, 6
-		RESOURCE_SETTINGS
-		{
-			GameSeed = 1845832008
-			MaxDeltaTime = 21600
-		}
+		name = SentinelScenario
+		scene = 7, 8, 5
+		NextSpawnTime = 22129.439684470362
 	}
 	FLIGHTSTATE
 	{
-		version = 1.0.5
-		UT = 1.84
+		version = 1.4.4
+		UT = 0.19999999999999998
 		activeVessel = 0
 		mapViewFiltering = 0
+		commNetUIModeTracking = Network
+		commNetUIModeFlight = Path
 		VESSEL
 		{
-			pid = e6821be4bf8b4485b105711e286cda64
+			pid = 85285d48db5c4504982dcbf99877c3a1
+			persistentId = 2894247507
 			name = Ast. HSJ-227
 			type = SpaceObject
 			sit = ORBITING
 			landed = False
+			skipGroundPositioning = False
+			vesselSpawning = True
+			launchedFrom = 
 			landedAt = 
+			displaylandedAt = 
 			splashed = False
-			met = 0
-			lct = 0
+			met = 0.02
+			lct = 0.02
 			lastUT = -1
+			distanceTraveled = 0
 			root = 0
-			lat = -2.83448079771527
-			lon = 181.081293346899
-			alt = 14594725651.1515
+			lat = -2.834481037089073
+			lon = -178.91869025122114
+			alt = 14594723382.726498
 			hgt = -1
 			nrm = 0,1,0
-			rot = -0.2984337,0.402898,-0.8173988,0.283672
+			rot = -0.298433661,0.402898014,-0.817398846,0.283672005
 			CoM = 0,0,0
 			stg = 0
 			prst = False
 			ref = 0
 			ctrl = False
+			PQSMin = 0
+			PQSMax = 0
 			ORBIT
 			{
-				SMA = 15240603820.6005
-				ECC = 0.109160279718296
-				INC = 2.87223694114734
-				LPE = 2.1172931939357
-				LAN = 261.773336331082
-				MNA = 6.22770556379867
-				EPH = 2043585.73608398
+				SMA = 15240599716.863926
+				ECC = 0.10916005429335328
+				INC = 2.8722372133875629
+				LPE = 2.1173136225901401
+				LAN = 261.77333596307551
+				MNA = -0.055480052760369054
+				EPH = 2043585.7560839844
 				REF = 0
 			}
 			PART
@@ -376,6 +456,7 @@ GAME
 				cid = 0
 				uid = 559298752
 				mid = 559298752
+				persistentId = 3458232900
 				launchID = 0
 				parent = 0
 				position = 0,0,0
@@ -383,6 +464,7 @@ GAME
 				mirror = 1,1,1
 				symMethod = Radial
 				istg = 0
+				resPri = 0
 				dstg = 0
 				sqor = 0
 				sepI = 0
@@ -390,13 +472,15 @@ GAME
 				attm = 0
 				srfN = None, -1
 				mass = 150
+				shielded = False
 				temp = -1
 				tempExt = 0
 				tempExtUnexp = 0
-				expt = 0.1
+				expt = 0.100000001
 				state = 0
-				connected = True
 				attached = True
+				autostrutMode = Off
+				rigidAttachment = False
 				flag = 
 				rTrf = 
 				modCost = 0
@@ -407,8 +491,8 @@ GAME
 			DISCOVERY
 			{
 				state = 1
-				lastObservedTime = 0
-				lifetime = 586354.710388184
+				lastObservedTime = 0.02
+				lifetime = 586354.71038818359
 				refTime = 1728000
 				size = 4
 			}
@@ -418,7 +502,21 @@ GAME
 			CTRLSTATE
 			{
 			}
+			VESSELMODULES
+			{
+				FlightIntegrator
+				{
+				}
+			}
 		}
+	}
+	LoaderInfo
+	{
+		client v0.21.6818.5408 = True
+		comms v0.21.6818.3152 = True
+		protobuf-net v2.0.0.668 = True
+		utils v0.21.6818.4593 = True
+		samv_client = True
 	}
 	ROSTER
 	{
@@ -431,10 +529,17 @@ GAME
 			brave = 0.5
 			dumb = 0.5
 			badS = True
+			veteran = True
 			tour = False
 			state = Available
+			inactive = False
+			inactiveTimeEnd = 0
+			gExperienced = 0
+			outDueToG = False
 			ToD = 0
 			idx = -1
+			extraXP = 0
+			hero = True
 			CAREER_LOG
 			{
 				flight = 0
@@ -451,12 +556,19 @@ GAME
 			type = Crew
 			trait = Engineer
 			brave = 0.5
-			dumb = 0.8
+			dumb = 0.800000012
 			badS = False
+			veteran = True
 			tour = False
 			state = Available
+			inactive = False
+			inactiveTimeEnd = 0
+			gExperienced = 0
+			outDueToG = False
 			ToD = 0
 			idx = -1
+			extraXP = 0
+			hero = True
 			CAREER_LOG
 			{
 				flight = 0
@@ -472,13 +584,20 @@ GAME
 			gender = Male
 			type = Crew
 			trait = Scientist
-			brave = 0.3
-			dumb = 0.1
+			brave = 0.300000012
+			dumb = 0.100000001
 			badS = False
+			veteran = True
 			tour = False
 			state = Available
+			inactive = False
+			inactiveTimeEnd = 0
+			gExperienced = 0
+			outDueToG = False
 			ToD = 0
 			idx = -1
+			extraXP = 0
+			hero = True
 			CAREER_LOG
 			{
 				flight = 0
@@ -494,13 +613,20 @@ GAME
 			gender = Female
 			type = Crew
 			trait = Pilot
-			brave = 0.55
-			dumb = 0.4
+			brave = 0.550000012
+			dumb = 0.400000006
 			badS = True
+			veteran = True
 			tour = False
 			state = Available
+			inactive = False
+			inactiveTimeEnd = 0
+			gExperienced = 0
+			outDueToG = False
 			ToD = 0
 			idx = -1
+			extraXP = 0
+			hero = True
 			CAREER_LOG
 			{
 				flight = 0
