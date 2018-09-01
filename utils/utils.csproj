@@ -39,6 +39,7 @@
     <Compile Include="settings.cs" />
     <Compile Include="toggleablewindow.cs" />
     <Compile Include="threadsafequeue.cs" />
+    <Compile Include="saves.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">

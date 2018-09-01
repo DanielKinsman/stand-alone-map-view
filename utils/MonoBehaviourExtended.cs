@@ -33,7 +33,7 @@ namespace StandAloneMapView.utils
         public virtual void Update(){}
         public virtual void OnDestroy(){}
 
-        public virtual void OnGUI()
+        /*public virtual void OnGUI()
         {
             if (this.ShowGUI)
             {
@@ -76,7 +76,7 @@ namespace StandAloneMapView.utils
 
                 _showGUI = value;
             }
-        }
+        }*/
 
         public string LogFormat(string message, params object[] formatParams)
         {

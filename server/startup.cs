@@ -19,9 +19,12 @@ along with Stand Alone Map View.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+#define DEBUG_START_SERVER // TODO unset
+
 using KSP;
 using System;
 using UnityEngine;
+
 
 namespace StandAloneMapView.server
 {
@@ -50,11 +53,7 @@ namespace StandAloneMapView.server
             this.Settings = Settings.Load();
 #if DEBUG_START_SERVER
             // Automatically load default save for quicker testing
-            HighLogic.SaveFolder = "default";
-            var game = GamePersistence.LoadGame("persistent",
-                                        HighLogic.SaveFolder, true, false);
-            game.startScene = GameScenes.SPACECENTER;
-            game.Start();
+            StandAloneMapView.utils.Saves.Load("default");
 #endif
         }
 
