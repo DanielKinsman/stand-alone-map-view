@@ -4,6 +4,7 @@ run apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E03280
 run apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     apt-transport-https \
     make \
+    zip \
     && apt-get -y clean
 
 run echo "deb https://download.mono-project.com/repo/debian wheezy/snapshots/3.12/. main" | tee /etc/apt/sources.list.d/mono-official-stable.list

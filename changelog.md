@@ -1,3 +1,8 @@
+v0.23
+
+* Workikng in KSP 1.4.x
+* removed all GUI elements (i hope you like editing config files)
+
 v0.21
 
 * Fix a bug with map view not working in career mode before maneuver nodes are available
