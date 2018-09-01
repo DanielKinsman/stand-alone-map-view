@@ -1,6 +1,6 @@
 /*
 
-Copyright 2014 Daniel Kinsman.
+Copyright 2014-2018 Daniel Kinsman.
 
 This file is part of Stand Alone Map View.
 
