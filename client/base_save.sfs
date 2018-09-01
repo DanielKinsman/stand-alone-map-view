@@ -7,7 +7,7 @@ GAME
 	linkCaption = 
 	Mode = SANDBOX
 	Status = 1
-	Seed = 1989222731
+	Seed = 501631559
 	scene = 5
 	editor = None
 	flag = Squad/Flags/default
@@ -20,7 +20,7 @@ GAME
 	versionCreated = 1.4.4.2215 (LinuxPlayer)
 	PARAMETERS
 	{
-		preset = Normal
+		preset = Custom
 		FLIGHT
 		{
 			CanQuickSave = True
@@ -78,11 +78,11 @@ GAME
 			MissingCrewsRespawn = True
 			RespawnTimer = 7200
 			BypassEntryPurchaseAfterResearch = True
-			AllowStockVessels = True
-			IndestructibleFacilities = False
+			AllowStockVessels = False
+			IndestructibleFacilities = True
 			ResourceAbundance = 1
-			ReentryHeatScale = 1
-			EnableCommNet = True
+			ReentryHeatScale = 0
+			EnableCommNet = False
 			AllowOtherLaunchSites = True
 		}
 		CAREER
@@ -161,256 +161,21 @@ GAME
 	}
 	SCENARIO
 	{
-		name = CommNetScenario
-		scene = 7, 8, 5, 6
-	}
-	SCENARIO
-	{
-		name = PartUpgradeManager
-		scene = 6, 5, 7
-		UPGRADES
-		{
-			Unlocks
-			{
-			}
-			Enableds
-			{
-			}
-		}
-	}
-	SCENARIO
-	{
-		name = ResourceScenario
-		scene = 7, 8, 5, 6, 21
-		RESOURCE_SETTINGS
-		{
-			GameSeed = 1398800320
-			MaxDeltaTime = 21600
-		}
-	}
-	SCENARIO
-	{
-		name = ScenarioNewGameIntro
-		scene = 5, 6, 8
-		kscComplete = False
-		editorComplete = False
-		tsComplete = False
-	}
-	SCENARIO
-	{
-		name = ProgressTracking
-		scene = 7, 8, 5
-		Progress
-		{
-		}
-	}
-	SCENARIO
-	{
-		name = VesselRecovery
-		scene = 5, 7, 8, 6
-	}
-	SCENARIO
-	{
-		name = ScenarioAchievements
-		scene = 7, 8, 5, 6
-	}
-	SCENARIO
-	{
-		name = ScenarioCustomWaypoints
-		scene = 7, 8, 21
-	}
-	SCENARIO
-	{
-		name = ScenarioDestructibles
-		scene = 5, 7, 6, 8
-		SpaceCenter/Administration/Facility/mainBuilding
-		{
-			intact = True
-		}
-		SpaceCenter/AstronautComplex/Facility/building
-		{
-			intact = True
-		}
-		SpaceCenter/LaunchPad/Facility/LaunchPadMedium/ksp_pad_cylTank
-		{
-			intact = True
-		}
-		SpaceCenter/LaunchPad/Facility/LaunchPadMedium/ksp_pad_launchPad
-		{
-			intact = True
-		}
-		SpaceCenter/LaunchPad/Facility/LaunchPadMedium/ksp_pad_sphereTank
-		{
-			intact = True
-		}
-		SpaceCenter/LaunchPad/Facility/LaunchPadMedium/ksp_pad_waterTower
-		{
-			intact = True
-		}
-		SpaceCenter/LaunchPad/Facility/LaunchPadMedium/KSCFlagPoleLaunchPad
-		{
-			intact = True
-		}
-		SpaceCenter/MissionControl/Facility/building
-		{
-			intact = True
-		}
-		SpaceCenter/ResearchAndDevelopment/Facility/ksp_pad_cylTank
-		{
-			intact = True
-		}
-		SpaceCenter/ResearchAndDevelopment/Facility/SmallLab
-		{
-			intact = True
-		}
-		SpaceCenter/ResearchAndDevelopment/Facility/CentralBuilding
-		{
-			intact = True
-		}
-		SpaceCenter/ResearchAndDevelopment/Facility/MainBuilding
-		{
-			intact = True
-		}
-		SpaceCenter/ResearchAndDevelopment/Facility/CornerLab
-		{
-			intact = True
-		}
-		SpaceCenter/ResearchAndDevelopment/Facility/WindTunnel
-		{
-			intact = True
-		}
-		SpaceCenter/ResearchAndDevelopment/Facility/Observatory
-		{
-			intact = True
-		}
-		SpaceCenter/ResearchAndDevelopment/Facility/SideLab
-		{
-			intact = True
-		}
-		SpaceCenter/Runway/Facility/model_runway_new_v43/runway_light_SE
-		{
-			intact = True
-		}
-		SpaceCenter/Runway/Facility/model_runway_new_v43/runway_light_NE
-		{
-			intact = True
-		}
-		SpaceCenter/Runway/Facility/model_runway_new_v43/runway_light_NW
-		{
-			intact = True
-		}
-		SpaceCenter/Runway/Facility/model_runway_new_v43/runway_light_SW
-		{
-			intact = True
-		}
-		SpaceCenter/Runway/Facility/End09
-		{
-			intact = True
-		}
-		SpaceCenter/Runway/Facility/End27
-		{
-			intact = True
-		}
-		SpaceCenter/Runway/Facility/Section1
-		{
-			intact = True
-		}
-		SpaceCenter/Runway/Facility/Section2
-		{
-			intact = True
-		}
-		SpaceCenter/Runway/Facility/Section3
-		{
-			intact = True
-		}
-		SpaceCenter/Runway/Facility/Section4
-		{
-			intact = True
-		}
-		SpaceCenter/SpaceplaneHangar/Facility/Tank
-		{
-			intact = True
-		}
-		SpaceCenter/SpaceplaneHangar/Facility/ksp_pad_cylTank
-		{
-			intact = True
-		}
-		SpaceCenter/SpaceplaneHangar/Facility/ksp_pad_waterTower
-		{
-			intact = True
-		}
-		SpaceCenter/SpaceplaneHangar/Facility/mainBuilding
-		{
-			intact = True
-		}
-		SpaceCenter/TrackingStation/Facility/dish_array/dish_south
-		{
-			intact = True
-		}
-		SpaceCenter/TrackingStation/Facility/dish_array/dish_north
-		{
-			intact = True
-		}
-		SpaceCenter/TrackingStation/Facility/dish_array/dish_east
-		{
-			intact = True
-		}
-		SpaceCenter/TrackingStation/Facility/MainBuilding
-		{
-			intact = True
-		}
-		SpaceCenter/VehicleAssemblyBuilding/Facility/ksp_pad_cylTank
-		{
-			intact = True
-		}
-		SpaceCenter/VehicleAssemblyBuilding/Facility/Tank
-		{
-			intact = True
-		}
-		SpaceCenter/VehicleAssemblyBuilding/Facility/mainBuilding
-		{
-			intact = True
-		}
-		SpaceCenter/VehicleAssemblyBuilding/Facility/PodMemorial
-		{
-			intact = True
-		}
-		SpaceCenter/FlagPole/Facility
-		{
-			intact = True
-		}
-	}
-	SCENARIO
-	{
-		name = ScenarioDiscoverableObjects
-		scene = 7, 8, 5
-		lastSeed = 559298752
-		sizeCurve
-		{
-			key = 0 0 1.5 1.5
-			key = 0.3 0.45 0.875 0.875
-			key = 0.7 0.55 0.875 0.875
-			key = 1 1 1.5 1.5
-		}
-	}
-	SCENARIO
-	{
-		name = SentinelScenario
-		scene = 7, 8, 5
-		NextSpawnTime = 22129.439684470362
+		name = MissionSystem
+		scene = 7, 8, 5, 6, 2, 21
 	}
 	FLIGHTSTATE
 	{
 		version = 1.4.4
-		UT = 0.19999999999999998
+		UT = 15.699999999999754
 		activeVessel = 0
 		mapViewFiltering = 0
 		commNetUIModeTracking = Network
 		commNetUIModeFlight = Path
 		VESSEL
 		{
-			pid = 85285d48db5c4504982dcbf99877c3a1
-			persistentId = 2894247507
+			pid = 1e0e2356e8c24a8fb9cc52635ddbca5e
+			persistentId = 883724470
 			name = Ast. HSJ-227
 			type = SpaceObject
 			sit = ORBITING
@@ -456,7 +221,7 @@ GAME
 				cid = 0
 				uid = 559298752
 				mid = 559298752
-				persistentId = 3458232900
+				persistentId = 3541076023
 				launchID = 0
 				parent = 0
 				position = 0,0,0
@@ -512,11 +277,11 @@ GAME
 	}
 	LoaderInfo
 	{
-		client v0.21.6818.5408 = True
 		comms v0.21.6818.3152 = True
 		protobuf-net v2.0.0.668 = True
-		utils v0.21.6818.4593 = True
-		samv_client = True
+		server v0.21.6818.10958 = True
+		utils v0.21.6818.10958 = True
+		samv_server = True
 	}
 	ROSTER
 	{

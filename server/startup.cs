@@ -19,8 +19,6 @@ along with Stand Alone Map View.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-#define DEBUG_START_SERVER // TODO unset
-
 using KSP;
 using System;
 using UnityEngine;

@@ -96,9 +96,6 @@ namespace StandAloneMapView.client
             try
             {
                 TcpWorker.Instance.Start();
-                CheatOptions.NoCrashDamage = true;
-                CheatOptions.UnbreakableJoints = true;
-
                 this.Settings = Settings.Load();
                 this.Reset();
             }
@@ -128,6 +125,13 @@ namespace StandAloneMapView.client
                 {
                     StandAloneMapView.utils.Saves.Load(
                         Startup.SAVEDIRECTORY, Startup.SAVEFILE, GameScenes.TRACKSTATION, this);
+                    // None of the settings below actually work :/
+                    HighLogic.CurrentGame.Parameters.Difficulty.EnableCommNet = false;
+                    HighLogic.CurrentGame.Parameters.Difficulty.IndestructibleFacilities = true;
+                    HighLogic.CurrentGame.Parameters.Difficulty.ReentryHeatScale = 0.0f;
+                    CheatOptions.NoCrashDamage = true;
+                    CheatOptions.UnbreakableJoints = true;
+                    CheatOptions.InfiniteElectricity = true;
                 }
                 catch(Exception e)
                 {

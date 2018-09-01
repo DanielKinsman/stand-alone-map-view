@@ -1,71 +1,86 @@
-pid = 1251cd2de6534435874440f0050d585c
+pid = c3dfb3bb74a242fc8ab3c269c3192cb1
+persistentId = 212394497
 name = dummy
-type = Debris
+type = Ship
 sit = PRELAUNCH
 landed = True
-landedAt = KSC_LaunchPad_Platform
+skipGroundPositioning = False
+vesselSpawning = False
+launchedFrom = LaunchPad
+landedAt = LaunchPad
+displaylandedAt = #autoLOC_6002112
 splashed = False
 met = 0
-lct = 3994.25685424597
-lastUT = 3994.25685424597
+lct = 135.01999999999526
+lastUT = 135.01999999999526
+distanceTraveled = 0
 root = 0
-lat = -0.0972077899828593
-lon = -74.5576770433344
-alt = 72.6070354451658
-hgt = 0.0600207
-nrm = -0.0001871288,0.9999999,2.33294E-05
-rot = -0.7009881,-0.09228224,-0.09733193,0.7004471
+lat = -0.097207795438816719
+lon = -74.55767654546321
+alt = 73.051281144260429
+hgt = 0.552282214
+nrm = 1.31130219E-06,1.00000024,7.74860382E-07
+rot = -0.700984955,-0.0921875834,-0.097295031,0.700468004
 CoM = 0,0,0
-stg = 1
+stg = 0
 prst = False
-ref = 4193820164
-ctrl = False
+ref = 2337303058
+ctrl = True
+PQSMin = 2
+PQSMax = 9
 cPch = 0.2
 cHdg = 0.3
 cMod = 0
 ORBIT
 {
-	SMA = 300818.65474876
-	ECC = 0.994798519149074
-	INC = 0.0972077888498288
-	LPE = 89.9999999999902
-	LAN = 172.169843185283
-	MNA = 3.14159265358979
-	EPH = 3994.25685424597
+	SMA = 300818.87903541472
+	ECC = 0.99479850867504571
+	INC = 0.097207795512402911
+	LPE = 89.997765873299798
+	LAN = 107.70017230026832
+	MNA = 3.1415926358606572
+	EPH = 135.01999999999526
 	REF = 1
 }
 PART
 {
-	name = strutCube
-	cid = 4294737564
-	uid = 4193820164
-	mid = 1734555793
-	launchID = 8
+	name = mk1-3pod
+	cid = 4294690256
+	uid = 2337303058
+	mid = 340095878
+	persistentId = 1144455995
+	launchID = 2
 	parent = 0
 	position = 0,0,0
 	rotation = 0,0,0,1
 	mirror = 1,1,1
 	symMethod = Radial
-	istg = 0
+	istg = -1
+	resPri = 0
 	dstg = 0
 	sqor = -1
-	sepI = 0
+	sepI = -1
 	sidx = -1
 	attm = 0
-	srfN = srfAttach, -1
-	attN = top, -1
+	srfN = , -1
 	attN = bottom, -1
-	mass = 0.001
-	temp = 312.872506988362
-	tempExt = 312.891722493608
-	tempExtUnexp = 312.89169935857
+	attN = top, -1
+	mass = 2.5999999
+	shielded = False
+	temp = 312.79070969388016
+	tempExt = 312.95706823410103
+	tempExtUnexp = 312.95730002409124
 	expt = 0.5
 	state = 0
-	connected = True
 	attached = True
+	autostrutMode = Off
+	rigidAttachment = False
 	flag = Squad/Flags/default
-	rTrf = strutCube (dummy)
+	rTrf = mk1-3pod
 	modCost = 0
+	crew = Valentina Kerman
+	crew = Bill Kerman
+	crew = Bob Kerman
 	EVENTS
 	{
 	}
@@ -75,11 +90,291 @@ PART
 	PARTDATA
 	{
 	}
+	MODULE
+	{
+		name = ModuleCommand
+		isEnabled = True
+		hibernation = False
+		hibernateOnWarp = False
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			MakeReferenceToggle
+			{
+				actionGroup = None
+			}
+			HibernateToggle
+			{
+				actionGroup = None
+				active = False
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleReactionWheel
+		isEnabled = True
+		actuatorModeCycle = 0
+		authorityLimiter = 100
+		stateString = Idle
+		stagingEnabled = True
+		WheelState = Active
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			CycleAction
+			{
+				actionGroup = None
+			}
+			Activate
+			{
+				actionGroup = None
+			}
+			Deactivate
+			{
+				actionGroup = None
+			}
+			Toggle
+			{
+				actionGroup = None
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleColorChanger
+		isEnabled = True
+		animState = False
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			ToggleAction
+			{
+				actionGroup = Light
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleScienceExperiment
+		isEnabled = True
+		Deployed = False
+		Inoperable = False
+		cooldownToGo = 0
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			DeployAction
+			{
+				actionGroup = None
+			}
+			ResetAction
+			{
+				actionGroup = None
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleScienceContainer
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			CollectAllAction
+			{
+				actionGroup = None
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = FlagDecal
+		isEnabled = True
+		flagDisplayed = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleConductionMultiplier
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleDataTransmitter
+		isEnabled = True
+		xmitIncomplete = False
+		stagingEnabled = True
+		canComm = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			StartTransmissionAction
+			{
+				actionGroup = None
+				active = False
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleProbeControlPoint
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleLiftingSurface
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleRCSFX
+		isEnabled = True
+		rcsEnabled = True
+		thrustPercentage = 100
+		currentShowToggles = False
+		enableYaw = True
+		enablePitch = True
+		enableRoll = True
+		enableX = True
+		enableY = True
+		enableZ = True
+		useThrottle = False
+		fullThrust = False
+		stagingEnabled = False
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			ToggleAction
+			{
+				actionGroup = None
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleTripLogger
+		isEnabled = True
+		stagingEnabled = True
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		Log
+		{
+			flight = 0
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	RESOURCE
+	{
+		name = ElectricCharge
+		amount = 150
+		maxAmount = 150
+		flowState = True
+		isTweakable = True
+		hideFlow = False
+		isVisible = True
+		flowMode = Both
+	}
+	RESOURCE
+	{
+		name = MonoPropellant
+		amount = 30
+		maxAmount = 30
+		flowState = True
+		isTweakable = True
+		hideFlow = False
+		isVisible = True
+		flowMode = Both
+	}
 }
 ACTIONGROUPS
 {
 	Stage = False, 0
-	Gear = True, 0
+	Gear = False, 0
 	Light = False, 0
 	RCS = False, 0
 	SAS = False, 0
@@ -116,4 +411,15 @@ CTRLSTATE
 	trimYaw = 0
 	trimRoll = 0
 	mainThrottle = 0
+}
+VESSELMODULES
+{
+	FlightIntegrator
+	{
+	}
+	CommNetVessel
+	{
+		controlState = KerbalFull
+		canComm = True
+	}
 }

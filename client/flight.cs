@@ -213,6 +213,7 @@ namespace StandAloneMapView.client
         public void ForceMapView()
         {
             MapView.EnterMapView();
+            InputLockManager.ClearControlLocks();
             var locks = ControlTypes.ACTIONS_SHIP | ControlTypes.ALL_SHIP_CONTROLS |
                 ControlTypes.GROUPS_ALL | ControlTypes.LINEAR | ControlTypes.QUICKLOAD | ControlTypes.QUICKSAVE |
                     ControlTypes.TIMEWARP | ControlTypes.VESSEL_SWITCHING;
