@@ -1,3 +1,10 @@
+This mod is now being maintained by linuxgurugamer
+
+* https://github.com/linuxgurugamer/stand-alone-map-view
+* https://forum.kerbalspaceprogram.com/index.php?/topic/211182-stand-alone-map-view-revived-multi-monitor-ksp-1123/
+
+Old notes below for posterity.
+
 Stand Alone Map View
 ====================
 
